@@ -26,7 +26,7 @@
             <v-icon left>
                 $radioactive
             </v-icon>
-            88.8
+            {{currentRadiation}}
             </v-chip>
 
             <v-chip
@@ -37,7 +37,7 @@
             <v-icon left>
                 $coefficient
             </v-icon>
-            88.8
+            {{ k1 }}
             </v-chip>
 
             <v-chip
@@ -48,7 +48,7 @@
             <v-icon left>
                 $coefficientAlt
             </v-icon>
-            88.8
+            {{ k2 }}
             </v-chip>
 
             <v-chip
@@ -59,10 +59,54 @@
             <v-icon left>
                 $speed
             </v-icon>
-            88.8
+            {{ velocity }}
             </v-chip>
+
+            <v-chip
+            class="ma-2"
+            label
+            text-color="white"
+            >
+            <v-icon left>
+                $calc
+            </v-icon>
+            {{ computedActivity }}
+            </v-chip>
+
+           <div
+            class="ma-2"
+            label
+            text-color="white"
+            style="width: 300px word-wrap: break-word;"
+            >
+
+            {{ temp }}
+            </div>
+ 
+            <div
+            class="ma-2"
+            label
+            text-color="white"
+            style="width: 300px word-wrap: break-word;"
+            >
+
+            {{ temp2 }}
+            </div>
+
+            <v-chip
+            class="ma-2"
+            label
+            text-color="white"
+            >
+            <v-icon left>
+                $calc
+            </v-icon>
+            {{ temp3 }}
+            </v-chip> 
             </div>
             <result-table v-bind:full="size"/>
+
+            
 
         </v-card>    
 </template>
@@ -80,6 +124,43 @@
     export default class ResultTableFull extends Vue {
         size = true
 
+        get currentRadiation(){
+            return this.$store.getters['printer/getCurrent']
+        }
+
+        get k1(){
+            return this.$store.getters['printer/getK1']
+        }
+
+        get k2(){
+            return this.$store.getters['printer/getK2']
+        }
+
+        get velocity(){
+            return this.$store.getters['printer/geVelocity']
+        }
+
+        get computedActivity(){
+            return this.$store.getters['printer/getComputedActivity']
+        }
+
+        get temp(){
+            return this.$store.getters['config/getHistory']
+            // return this.$store.getters['printer/getInExperiment']
+            // return this.$store.getters['printer/getcurrTab']
+        }
+
+        get temp2(){
+            //return this.$store.getters['printer/getcurrIter']
+            return this.$store.getters['config/getTest']
+        }
+
+        get temp3(){
+            return this.$store.getters['printer/getcurrTab']
+            //return this.$store.getters['config/getHistory']
+        }
+
+       
+
     }
 </script>
-  

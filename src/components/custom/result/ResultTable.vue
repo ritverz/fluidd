@@ -18,11 +18,18 @@ export default class ResultTable extends Mixins(StateMixin) {
   @Prop({ type: Number, required: true, default: 33})
   readonly itemsPerPage!: number
 
-  iterations = 5
-
+  get iterations(){
+    return  this.$store.getters['printer/getIterCount']
+  }
+  
   get values(){
-    this.$store.commit('setTestData')
-    return this.$store.getters.getRadiometerValues;
+    let values = this.$store.getters['config/getExperimentResult']
+    let tableValues = []
+    for (let tab in values){
+      tableValues.push(Object.assign({},...values[tab]))
+    }
+    
+    return tableValues
   }
 
   headers() {
@@ -32,7 +39,7 @@ export default class ResultTable extends Mixins(StateMixin) {
         text: '№ табл.',
         align: 'start',
         sortable: false,
-        value: 'name',
+        value: 'tablet',
     }
     headersArr.push(firstCol)
 

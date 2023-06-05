@@ -2,13 +2,12 @@
 <div>
     <v-toolbar>
         <v-btn>
-            Создать CSV
+          <a v-on:click="download()" :href="myUrl" :download="myFilename">Скачать CSV</a>
         </v-btn>
+        
+        
         <v-btn>
             Просмотр отчета
-        </v-btn>
-        <v-btn>
-            Создать пресет
         </v-btn>
 
         <v-spacer />
@@ -20,6 +19,7 @@
         />
     </v-toolbar>
 
+    <!-- <p> {{ realHistory }}</p> -->
     <v-data-table
         v-model="selected"
         :headers="visibleHeaders"
@@ -53,6 +53,10 @@ import { Component, Vue } from 'vue-property-decorator'
     export default class HistoryTable extends Vue {
         expanded = []
 
+        myUrl = '#'
+        myFilename = ''
+        json_data  = [
+            {'name': 'Test'}]
         headers = [
         {
             text: 'Dessert (100g serving)',
@@ -90,6 +94,16 @@ import { Component, Vue } from 'vue-property-decorator'
         {
           return this.headers.filter(header => header.visible || header.visible === undefined)
         }
+        
+        get realHistory(){
+          return this.$store.getters['config/getHistory']
+        }
+
+      download() {
+      const data = encodeURIComponent('NAME, "HANNA"')
+        this.myUrl = `data:text/plain;charset=utf-8,${data}`
+        this.myFilename = 'example.CSV'
+    }
 
     }
 </script>

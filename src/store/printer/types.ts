@@ -1,3 +1,6 @@
+import { SetupPresets } from '../config/types'
+
+
 export interface PrinterState {
   printer: Printer;
 }
@@ -5,6 +8,51 @@ export interface PrinterState {
 export interface Printer {
   [key: string]: any;
 }
+
+export interface  RadiometerState {
+  state: boolean;
+  name: string;
+  current: number;
+  k1: number;
+  k2: number;
+  velocity: number;
+  // results: Experiment;
+  // history: HistoryEntry[];
+  temp: number;
+
+  currIter: number;
+  currTab: number;
+  inExperiment: boolean;
+  isPaused: boolean;
+  tabCount: number;
+  iterCount:number;
+}
+
+
+// export interface HistoryEntry{
+  
+//   preset: SetupPresets;
+//   results: Experiment;
+// }
+
+// export interface Experiment{
+//   [x: string]: ExperimentEntry[];
+// }
+
+// export interface ExperimentEntry{
+//   [x: string]: any;
+// }
+
+// export interface RadiometerEntry {
+//   // V: number;
+//   // A: number;
+//   // a: number;
+//   // date: string;
+//   // tablet: number;
+
+//   [x: string]: any,
+// }
+
 
 export interface KnownExtruder {
   name: string;

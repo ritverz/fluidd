@@ -15,7 +15,7 @@ export const actions: ActionTree<MacrosState, RootState> = {
   /**
    * Init stored macros
    */
-  initMacros ({ commit }, payload) {
+  initMacros ({ commit}, payload) {
     commit('initMacros', payload)
   },
 

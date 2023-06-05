@@ -1,6 +1,6 @@
 import { GetterTree } from 'vuex'
 import vuetify from '@/plugins/vuetify'
-import { ConfigState, SupportedTheme, TemperaturePreset, ThemeConfig, SetupPresets } from './types'
+import { ConfigState, SupportedTheme, TemperaturePreset, ThemeConfig, SetupPresets, Experiment } from './types'
 import { RootState } from '../types'
 import { Heater, Fan } from '../printer/types'
 import tinycolor from '@ctrl/tinycolor'
@@ -8,8 +8,31 @@ import { AppTableHeader } from '@/types'
 import { AppTablePartialHeader } from '@/types/tableheaders'
 import { RootFile } from '../files/types'
 import md5 from 'md5'
+import { set } from 'vue/types/umd'
 
 export const getters: GetterTree<ConfigState, RootState> = {
+
+// Custom getters
+getTest: (state)=> {
+return state.test
+},
+
+getHistory: (state)=> {
+  return state.uiSettings.history
+},
+
+getSetupMacrosCmd: (state) : string => {
+    let setup = state.uiSettings.setup.currentSetup
+    let tab_count = setup.sourceNumber
+    let tab_activity = setup.radionuclideActivity
+    let sol_volume = setup.initialVolume
+    let sol_activity = setup.initialActivity
+    let sol_vol_activity =  sol_activity == 0 ? '' : sol_activity / sol_volume
+
+    return `start_process TAB_ACTIVITY=${tab_activity} TAB_COUNT=${tab_count} SOL_VOLUME=${sol_volume} SOL_VOL_ACTIVITY=${sol_vol_activity}`
+},
+
+// End of custom getters
   getCurrentInstance: (state) => {
     return state.instances.find(instance => instance.active)
   },
@@ -33,6 +56,10 @@ export const getters: GetterTree<ConfigState, RootState> = {
     return state.uiSettings.setup.setupPresets
   },
 
+  getCurrentSetup: (state) => {
+    return state.uiSettings.setup.currentSetup
+  },
+
   getSetupPresetByName: (state) => (name: string) => {
     const presets: SetupPresets[] = state.uiSettings.setup.setupPresets
     const index: number = presets.findIndex(preset => preset.name === name)
@@ -46,6 +73,23 @@ export const getters: GetterTree<ConfigState, RootState> = {
 
   getMode: (state) => {
     return state.uiSettings.setup.mode
+  },
+
+  getExperimentResult: (state): Experiment => {
+    /** Results type is
+    {1: //tablet num
+      [
+        {tablet: 1},
+        {V1:0, a1 :0...}, //iteration 1
+        {V2:0 ...}  //iteration 2
+      ],
+     2:[
+        {},
+        {}
+      ]
+    }
+    */
+    return state.uiSettings.results 
   },
   
 

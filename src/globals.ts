@@ -1,4 +1,6 @@
 import {
+  mdiEraser,
+  mdiCalculator,
   mdiSpeedometer,
   mdiAlphaKBoxOutline,
   mdiRefreshAuto,
@@ -225,6 +227,8 @@ export const Globals = Object.freeze({
 })
 
 export const Icons = Object.freeze({
+  erase:mdiEraser,
+  calc: mdiCalculator,
   speed: mdiSpeedometer,
   auto: mdiRefreshAuto,
   manual: mdiGestureTap,

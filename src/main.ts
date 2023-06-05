@@ -47,6 +47,7 @@ Vue.directive('sortableDataTable', SortableDataTable)
 // v-chart component asynchronously loaded from a split chunk
 Vue.component('EChart', () => import('./vue-echarts-chunk'))
 
+
 // Use any Plugins
 Vue.use(VueVirtualScroller)
 Vue.use(FiltersPlugin)

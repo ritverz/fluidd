@@ -3,6 +3,7 @@ import { Globals } from '@/globals'
 
 export const defaultState = (): ConfigState => {
   return {
+    test: 0,
     apiUrl: '',
     socketUrl: '',
     layoutMode: false,
@@ -144,8 +145,39 @@ export const defaultState = (): ConfigState => {
         sourceCodeValues: [],
         matrixTypeValues:[],
         setupPresets: [],
+        currentSetup: {
+          id: -1,
+          name: '',
+          sourceCode : '',
+          numberTP : '',
+          radionuclide : '',
+          radionuclideActivity: '',
+          sourceStart : 0,
+          sourceNumber : 1,
+          recipient : '',
+          technologist : '',
+          notes : '',
+          matrix :'',
+          targetActivity : 0,
+          refFirstActivity : 0,
+          refFirstDate: new Date().toISOString().substr(0, 10),
+          refSecondActivity : 0,
+          refSecondDate: new Date().toISOString().substr(0, 10),
+          radioactiveNumber:'',
+          initialActivity : 0,
+          initialVolume : 0,
+          accessories : [
+              {
+                  id: '',
+                  number: 0,
+                  date: new Date().toISOString().substr(0, 10), 
+              },
+          ]
+        },
         mode: 1,
-      }
+      },
+      results: {},
+      history:[],
     }
   }
 }

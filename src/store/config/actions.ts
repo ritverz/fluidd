@@ -8,6 +8,35 @@ import { Waits } from '@/globals'
 import { AppTableHeader } from '@/types'
 
 export const actions: ActionTree<ConfigState, RootState> = {
+  // Custom actions
+
+  /**
+   * Add history entry
+   */
+  async addHistory({ commit, state }){
+    commit('setTest', 'haha3')
+    commit('setHistory')
+    SocketActions.serverWrite('uiSettings.history', state.uiSettings.history)
+  },
+
+  /**
+   * Add or update a given setup preset
+   */
+  async updateSetupPreset ({ commit, state }, payload) {
+    commit('setSetupPreset', payload)
+    SocketActions.serverWrite('uiSettings.setup.setupPresets', state.uiSettings.setup.setupPresets)
+  },
+
+/**
+ * Remove a setup preset
+ */
+  async removeSetupPreset ({ commit, state }, payload) {
+    commit('setRemoveSetupPreset', payload)
+    SocketActions.serverWrite('uiSettings.setup.setupPresets', state.uiSettings.setup.setupPresets)
+  },
+
+  //End of custom actions
+
   /**
    * Reset our store
    */
@@ -125,22 +154,6 @@ export const actions: ActionTree<ConfigState, RootState> = {
       SocketActions.serverWrite(config.path, config.value)
     }
   },
-
-  /**
-   * Add or update a given setup preset
-   */
-    async updateSetupPreset ({ commit, state }, payload) {
-      commit('setSetupPreset', payload)
-      SocketActions.serverWrite('uiSettings.setup.setupPresets', state.uiSettings.setup.setupPresets)
-    },
-  
-  /**
-   * Remove a setup preset
-   */
-    async removeSetupPreset ({ commit, state }, payload) {
-      commit('setRemoveSetupPreset', payload)
-      SocketActions.serverWrite('uiSettings.setup.setupPresets', state.uiSettings.setup.setupPresets)
-    },
 
   /**
    * Add or update a given temp preset

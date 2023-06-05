@@ -1,11 +1,74 @@
 import Vue from 'vue'
 import { MutationTree } from 'vuex'
-import { PrinterState } from './types'
+import { PrinterState} from './types'
+import { SaveByPath } from '../config/types'
 import { defaultState } from './state'
 import consola from 'consola'
-import { get } from 'lodash-es'
+import { get, set } from 'lodash-es'
+import { SetupPresets } from '../config/types'
 
 export const mutations: MutationTree<PrinterState> = {
+  /**
+   * Custom mutations
+   */
+
+  setCurrentExperimentTab(state, payload){
+    state.printer.radiometer.currTab =  payload
+  },
+
+  setTabCount(state, payload){
+    state.printer.radiometer.tabCount =  payload
+  },
+
+  setIterCount(state, payload){
+    state.printer.radiometer.iterCount =  payload
+  },
+
+  setCurrentExperimentIter(state, payload){
+    state.printer.radiometer.currIter =  payload
+},
+
+  setCurrentRadiometerSig(state, payload){
+    state.printer.radiometer.current = payload
+  },
+
+  setCurrentRadiometerTemp(state, payload){
+    state.printer.radiometer.temp = payload
+  },
+
+  setK1(state, payload){
+    state.printer.radiometer.k1 = payload
+  },
+
+  setK2(state, payload){
+    state.printer.radiometer.k2 = payload
+  },
+
+  setVelocity(state, payload){
+    state.printer.radiometer.velocity = payload
+  },
+
+  startNewExperiment(state){
+    
+    state.printer.radiometer.inExperiment = true
+  },
+
+  endExperiment(state){
+    state.printer.radiometer.inExperiment = false
+  },
+
+  setInExperiment(state, payload){
+    state.printer.radiometer.inExperiment = payload
+  },
+
+  pauseExperiment(state){
+    state.printer.radiometer.isPaused = true
+  },
+
+  resumeExperiment(state){
+    state.printer.radiometer.isPaused = false
+  },
+
   /**
    * Reset state
    */
@@ -46,6 +109,7 @@ export const mutations: MutationTree<PrinterState> = {
       const o = get(state.printer, payload.key)
       if (o === undefined) {
         // Object is not set yet, so create it.
+        console.log('notify', payload)
         Vue.set(state.printer, payload.key, payload.payload)
       } else {
         Object.keys(payload.payload).forEach((p) => {

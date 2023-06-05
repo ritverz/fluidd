@@ -59,7 +59,7 @@
             </app-btn>
 
             <!-- pause -->
-            <app-btn
+            <!-- <app-btn
 
               :loading="hasWait($waits.onPrintPause)"
               :disabled="hasWait([$waits.onPrintCancel, $waits.onPrintResume, $waits.onPrintPause])"
@@ -73,10 +73,10 @@
                 $pause
               </v-icon>
               <span>{{ $t('app.general.btn.pause') }}</span>
-            </app-btn>
+            </app-btn> -->
 
             <!--resume -->
-            <app-btn
+            <!-- <app-btn
               :loading="hasWait($waits.onPrintResume)"
               :disabled="hasWait([$waits.onPrintCancel, $waits.onPrintResume, $waits.onPrintPause])"
               class="ml-1"
@@ -89,7 +89,7 @@
                 $resume 
               </v-icon>
               <span>{{ $t('app.general.btn.resume') }}</span>
-            </app-btn>
+            </app-btn> -->
           </app-btn-group>
           </v-col>
           
@@ -168,31 +168,34 @@ export default class Setup extends Mixins(StateMixin){
   }
 
   startPrint() {
-    SocketActions.printerPrintStart("/path/main.nc")
+    //SocketActions.printerPrintStart("/path/main.nc")
+    this.$store.dispatch('config/saveByPath', {
+      path: 'uiSettings.setup.currentSetup',
+      value: this.$store.getters['config/getCurrentSetup'],
+      server: true
+    })
+    this.$store.dispatch('printer/onExperimentStart').then((res) => {
+      let start_cmd = this.$store.getters['config/getSetupMacrosCmd']
+      this.sendGcode(`${start_cmd}`)
+    })
   }
 
   pausePrint() {
-    SocketActions.printerPrintPause()
+    //SocketActions.printerPrintPause()
+    this.sendGcode('PAUSE')
 
   }
 
   resumePrint(){
-    SocketActions.printerPrintResume()
+    //SocketActions.printerPrintResume()
+    this.sendGcode('RESUME')
 
   }
 
   cancelPrint () {
-    this.$tc('app.general.simple_form.msg.confirm')
-    this.$confirm(
-      this.$tc('app.general.simple_form.msg.confirm'),
-      { title: this.$tc('app.general.label.confirm'), color: 'card-heading', icon: '$error' }
-    )
-      .then(res => {
-        if (res) {
-          SocketActions.printerPrintCancel()
-          this.addConsoleEntry('CANCEL_PRINT')
-        }
-      })
+    this.sendGcode('STOP')
+    this.$store.dispatch('printer/onExperimentEnd')
+    this.emergencyStop()
   }
 }
 

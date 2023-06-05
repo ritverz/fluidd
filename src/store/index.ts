@@ -29,7 +29,6 @@ import { parts } from './parts'
 import { webcams } from './webcams'
 import { jobQueue } from './jobQueue'
 
-import {radiometer} from './radiometer'
 
 Vue.use(Vuex)
 
@@ -59,7 +58,6 @@ export default new Vuex.Store<RootState>({
     parts,
     webcams,
     jobQueue,
-    radiometer
   },
   mutations: {},
   actions: {
@@ -70,6 +68,8 @@ export default new Vuex.Store<RootState>({
       // Reset our color set.
       Vue.$colorset.forceResetAll()
 
+      
+
       // Dispatch a reset for each registered module.
       const p: Promise<any>[] = []
       const keys = payload || Object.keys(this.state)
@@ -78,6 +78,7 @@ export default new Vuex.Store<RootState>({
           p.push(dispatch(key + '/reset'))
         }
       })
+      
       return Promise.all(p)
     },
 
@@ -89,11 +90,14 @@ export default new Vuex.Store<RootState>({
       // Set the api connection state..
       commit('socket/setApiConnected', payload.apiConnected)
 
+
       // Init the host and local configs..
       return [
         await dispatch('config/initHost', payload),
         await dispatch('config/initLocal', payload)
       ]
+
+
     },
 
     /**

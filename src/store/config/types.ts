@@ -24,6 +24,14 @@ export interface UiSettings {
   fileSystem: FileSystemConfig;
   toolhead: ToolheadConfig;
   setup: SetupConfig;
+  results: Experiment;
+  history: HistoryEntry[];
+
+}
+
+export interface HistoryEntry{
+  experiment: Experiment;
+  setup: SetupPresets;
 }
 
 export interface SetupConfig {
@@ -32,11 +40,31 @@ export interface SetupConfig {
   sourceCodeValues: string[];
   matrixTypeValues: string[];
   setupPresets: SetupPresets[];
+  currentSetup: SetupPresets;
   mode: Number;
 }
 
+export interface Experiment{
+  [x: string]: ExperimentEntry[];
+}
+
+export interface ExperimentEntry{
+  [x: string]: any;
+}
+
+export interface RadiometerEntry {
+  // V: number;
+  // A: number;
+  // a: number;
+  // date: string;
+  // tablet: number;
+
+  [x: string]: any,
+}
+
+
 export interface SetupPresets {
-  id: number;
+  id: any;
   name: string;
   sourceCode: string;
   numberTP: string;
@@ -47,6 +75,23 @@ export interface SetupPresets {
   recipient: string;
   technologist: string;
   notes: string;
+  matrix: string;
+  targetActivity: number;
+  refFirstActivity: number;
+  refFirstDate: string;
+  refSecondActivity: number;
+  refSecondDate: string;
+  radioactiveNumber: string;
+  initialActivity: number;
+  initialVolume: number;
+  accessories: Accessory [];
+}
+
+export interface Accessory {
+  id: string;
+  number: number;
+  date: string;
+
 }
 
 export interface ToolheadConfig {

@@ -11,9 +11,10 @@
         </v-autocomplete>
     </v-col>
          
-    <v-col cols="3" >
+    <v-col cols="4" >
 
         <!--Редактор пресета-->
+
         <v-btn
             large
             color="primary"
@@ -23,6 +24,17 @@
             large>
             
             $edit
+            </v-icon>
+        </v-btn>
+
+        <v-btn
+            large
+            @click="clearPresetData()"
+        >
+            <v-icon
+            large>
+            
+            $erase
             </v-icon>
         </v-btn>
 
@@ -44,7 +56,10 @@
                 >
                 <v-icon>$close</v-icon>
                 </v-btn>
-                <v-toolbar-title>Редактирование набора</v-toolbar-title>
+                <v-toolbar-title>
+                    <span>Редактирование набора</span>
+                    <span v-if="selectedPreset != '-'"> {{ selectedPreset }}</span>
+                </v-toolbar-title>
                 <v-spacer></v-spacer>
 
                 <!--Обновление пресета-->
@@ -88,7 +103,7 @@
                             </v-card-title>
                             <v-card-text>
                                 <v-text-field
-                                v-model="name"></v-text-field>
+                                v-model="preset.name"></v-text-field>
                             </v-card-text>
                             <v-card-actions>
                                 <v-btn
@@ -101,6 +116,7 @@
                                 @click="dialogName = false">
                                     Отмена
                                 </v-btn>
+                             
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
@@ -121,25 +137,25 @@
                     <v-container>
                         <v-col>
                             <v-autocomplete  
-                                v-model="sourceCode"
+                                v-model="preset.sourceCode"
                                 :items="sourceCodeValues"
                                 clearable
                                 label="Код источника">
                             </v-autocomplete>
                             <v-text-field  
-                                v-model="numberTP" 
+                                v-model="preset.numberTP" 
                                 label="Номер ТП">
                             </v-text-field>
                             <v-text-field
-                                v-model="radionuclide"
+                                v-model="preset.radionuclide"
                                 label="Радионуклид">
                             </v-text-field>
                             <v-text-field 
-                                v-model="radionuclideActivity" 
+                                v-model="preset.radionuclideActivity" 
                                 label="Активность радионуклида в источнике">
                             </v-text-field>
                             <v-text-field 
-                                v-model.number="sourceStart"
+                                v-model.number="preset.sourceStart"
                                 type="number"
                                 label="Начальный номер источника"
                                 @submit="updateSourceStart"
@@ -147,29 +163,29 @@
                             </v-text-field>
                             <app-named-slider
                                 suffix="шт"
-                                :value="sourceNumber"
+                                :value="preset.sourceNumber"
                                 :reset-value="0"
                                 :label="label"
                                 @submit="updateSourceNumber"
                             />
                             
-                            <p class="text--disabled font-weight-thin" v-if="sourceNumber != undefined && sourceStart !=undefined">
+                            <p class="text--disabled font-weight-thin" v-if="preset.sourceNumber != undefined && preset.sourceStart !=undefined">
                             {{ rangeValue }}
                             </p>
                             <v-autocomplete  
-                                v-model="recipient"
+                                v-model="preset.recipient"
                                 :items="recipientValues"
                                 clearable
                                 label="Получатель">
                             </v-autocomplete>
                             <v-autocomplete 
-                                v-model="technologist"
+                                v-model="preset.technologist"
                                 :items="technologistValues"
                                 clearable
                                 label="Технолог">
                             </v-autocomplete>
                             <v-text-field 
-                                v-model="notes" 
+                                v-model="preset.notes" 
                                 label="Примечания">
                             </v-text-field>
                     </v-col>
@@ -181,12 +197,16 @@
                     <v-container>
                         <v-col>
                             <v-autocomplete 
-                                v-model="matrix"
+                                v-model="preset.matrix"
                                 :items="matrixTypeValues"
                                 clearable
                                 label="Тип керамической матрицы">
                             </v-autocomplete>
-                            <v-text-field suffix="мКи" label="Целевая активность одной активной части"></v-text-field>
+                            <v-text-field 
+                                v-model.number="preset.targetActivity"
+                                suffix="мКи"
+                                label="Целевая активность одной активной части">
+                            </v-text-field>
                         </v-col>
                     </v-container>
                 </v-tab-item>
@@ -195,13 +215,37 @@
                 <v-tab-item>
                     <v-container>
                         <v-col>
-                            <v-text-field suffix="мКи" label="Активность эталона № 1"></v-text-field>
-                            <setup-calendar  type="date" label="Дата калибровки активности эталона №1"/>
-                            <v-text-field suffix="мКи" label="Активность эталона № 2"></v-text-field>
-                            <setup-calendar  label="Дата калибровки активности эталона №2"/>
-                            <v-text-field label="Номер ПВК радиоактивного препарата"></v-text-field>
-                            <v-text-field suffix="мКи" label="Начальная активность препарата"></v-text-field>
-                            <v-text-field suffix="мкл" label="Начальный объем препарата"></v-text-field>
+                            <v-text-field 
+                                v-model.number="preset.refFirstActivity"
+                                suffix="мКи"
+                                label="Активность эталона № 1">
+                            </v-text-field>
+                            <setup-calendar
+                            v-model="preset.refFirstDate"
+                            type="date"
+                            label="Дата калибровки активности эталона №1"/>
+                            <v-text-field
+                                v-model="preset.refSecondActivity"
+                                suffix="мКи" 
+                                label="Активность эталона № 2">
+                            </v-text-field>
+                            <setup-calendar
+                                v-model="preset.refSecondDate"
+                                label="Дата калибровки активности эталона №2"/>
+                            <v-text-field 
+                                v-model="preset.radioactiveNumber"
+                                label="Номер ПВК радиоактивного препарата">
+                            </v-text-field>
+                            <v-text-field 
+                                v-model.number="preset.initialActivity"
+                                suffix="мКи" 
+                                label="Начальная активность препарата">
+                            </v-text-field>
+                            <v-text-field 
+                                v-model.number="preset.initialVolume"
+                                suffix="мкл" 
+                                label="Начальный объем препарата">
+                            </v-text-field>
                         </v-col>
                     </v-container>
                 </v-tab-item>
@@ -212,7 +256,7 @@
                     <v-list>
                         <v-list-item
                         class="mb-5 d-block"
-                        v-for="(item, index) in items"
+                        v-for="(item, index) in preset.accessories"
                         :key="index"
                         >
                             <v-card>
@@ -224,12 +268,12 @@
                                     </v-col>
                                 </v-card-text>
                                 <v-card-actions>
-                                    <v-btn v-if="index == items.length - 1" @click="addItem()">
+                                    <v-btn v-if="index == preset.accessories.length - 1" @click="addAccessory()">
                                         <v-icon>
                                             $plus
                                         </v-icon>
                                     </v-btn>
-                                    <v-btn v-if="items.length > 1" @click="deleteItem(index)">
+                                    <v-btn v-if="preset.accessories.length > 1" @click="deleteAccessory(index)">
                                         <v-icon>
                                             $minus
                                         </v-icon>
@@ -262,28 +306,14 @@ import SetupCalendar from './SetupCalendar.vue'
   }
 })
 export default class SetupDialog extends Mixins(StateMixin){
-    sourceCode = ''
-    numberTP = ''
-    radionuclide = ''
-    radionuclideActivity = ''
-    technologist = ''
-    recipient = ''
-    notes = ''
-    matrix = ''
-    id = -1
-    name = ''
-
-
-    // presets = ['-', 'Пресет1', 'Пресет2', 'Пресет3']
     selectedPreset = '-'
-
-    sourceStart = 0
-    sourceNumber = 1
     label = "Количество"
-
     dialog = false
     dialogName = false
-
+    tab = null
+    //date = new Date().toISOString().substr(0, 10);
+    ctrlMenu = false
+    
 
     get presetsNames(){
         let names = [...this.$store.getters['config/getSetupPresetsNames']]
@@ -295,38 +325,48 @@ export default class SetupDialog extends Mixins(StateMixin){
         return this.$store.getters['config/getSetupPresets']
     }
 
-    get preset(){
-        return {
-                id: this.id,
-                name: this.name,
-                sourceCode: this.sourceCode,
-                numberTP: this.numberTP,
-                radionuclide: this.radionuclide,
-                radionuclideActivity: this.radionuclideActivity,
-                sourceStart: this.sourceStart,
-                sourceNumber: this.sourceNumber,
-                recipient: this.recipient,
-                technologist: this.technologist,
-                notes: this.notes
-        }
+    set preset(payload){
+        this.$store.commit('config/setCurrentSetup', payload)
+
     }
 
-    removePreset(){
-        this.dialog = false
+    get preset(){
+        return this.$store.getters['config/getCurrentSetup']
+    }
+
+    removePreset(){    
         this.$store.dispatch('config/removeSetupPreset', this.preset)
         this.selectedPreset = '-'
+        this.dialog = false
     }
 
     saveNewPreset(){
         this.dialog = false
-        let  newPreset = Object.create(this.preset)
-        newPreset.id = -1
-        this.$store.dispatch('config/updateSetupPreset', newPreset)
+        this.preset.id = -1
+        this.$store.dispatch('config/updateSetupPreset', this.preset)
     }
 
     updatePreset(){
         this.dialog = false
         this.$store.dispatch('config/updateSetupPreset', this.preset)
+
+    }
+
+    addAccessory() {
+        this.preset.accessories.push(
+            {
+                id: undefined,
+                number: undefined,
+                date: new Date().toISOString().substr(0, 10), 
+            }
+        )
+
+    }
+
+    deleteAccessory(i: number){
+        if (this.preset.accessories.length > 1) {
+            this.preset.accessories.splice(i, 1)
+        }
 
     }
 
@@ -337,36 +377,71 @@ export default class SetupDialog extends Mixins(StateMixin){
                 const preset = this.$store.getters['config/getSetupPresetByName'](this.selectedPreset)
                 this.initWithPresetData(preset)
             }
+
+        }
+        if (!val){
+            this.$store.commit('config/setCurrentSetup', this.preset)
         }
     }
 
-    initWithPresetData(preset: any){
-        this.sourceCode = preset.sourceCode
-        this.numberTP = preset.numberTP
-        this.radionuclide = preset.radionuclide
-        this.radionuclideActivity = preset.radionuclideActivity
-        this.technologist = preset.technologist
-        this.recipient = preset.recipient
-        this.notes = preset.notes
-        this.matrix = preset.matrix
-        this.sourceStart = preset.sourceStart
-        this.sourceNumber = preset.sourceNumber
-        this.id = preset.id
-        this.name = preset.name
+    @Watch('selectedPreset')
+    selectedPresetSet(val: string) {
+        if (this.selectedPreset != '-'){
+            const preset = this.$store.getters['config/getSetupPresetByName'](this.selectedPreset)
+            this.initWithPresetData(preset)
+            this.$store.commit('config/setCurrentSetup', this.preset)
+        }
+        else{
+            this.$store.commit('config/setCurrentSetup', this.preset)
+        }
+    }
+
+
+    clearPresetData(){
+        this.selectedPreset = '-'
+        this.$store.commit('config/clearCurrentSetup')
+    }
+
+    initWithPresetData(payload: any){
+       
+        this.preset = {...payload}
+        // this.id = preset.id
+        // this.name = preset.name
+        // this.sourceCode = preset.sourceCode
+        // this.numberTP = preset.numberTP
+        // this.radionuclide = preset.radionuclide
+        // this.radionuclideActivity = preset.radionuclideActivity
+        // this.sourceStart = preset.sourceStart
+        // this.sourceNumber = preset.sourceNumber
+        // this.technologist = preset.technologist
+        // this.recipient = preset.recipient
+        // this.notes = preset.notes
+        // this.matrix = preset.matrix
+        // this.targetActivity = preset.targetActivity
+        // this.refFirstActivity = preset.refFirstActivity
+        // this.refFirstDate = preset.refFirstDate != '' ?  preset.refFirstDate :  new Date().toISOString().substr(0, 10)
+        // this.refSecondActivity = preset.refSecondActivity 
+        // this.radioactiveNumber = preset.radioactiveNumber
+        // this.refSecondDate = preset.refSecondDate != '' ? preset.refSecondDate : new Date().toISOString().substr(0, 10)
+        // this.initialVolume = preset.initialVolume
+        // this.initialActivity = preset.initialActivity
+        // this.accessories = preset.accessories
+        
     }
 
 
     updateSourceStart(target: number){
-        this.sourceStart = target
+        this.preset.sourceStart = target
     }
+    
     updateSourceNumber(target: number){
-        this.sourceNumber = target
+        this.preset.sourceNumber = target
     }
 
     get rangeValue(){
-        if (this.sourceStart != undefined && this.sourceNumber != undefined){
-            let end = this.sourceStart + this.sourceNumber
-            return `Диапазон (${this.sourceStart} - ${end})`
+        if (this.preset.sourceStart != undefined && this.preset.sourceNumber != undefined){
+            let end = this.preset.sourceStart + this.preset.sourceNumber
+            return `Диапазон (${this.preset.sourceStart} - ${end})`
         }
         else {
             return ""
@@ -388,37 +463,6 @@ export default class SetupDialog extends Mixins(StateMixin){
 
     get recipientValues (){
         return this.$store.state.config.uiSettings.setup.recipientValues
-    }
-
-    items = [
-        {
-            id: undefined,
-            number: undefined,
-            date: undefined, 
-        },
-    ]
-    tab = null
-    test = 999
-    date = new Date().toISOString().substr(0, 10);
-    ctrlMenu = false
-
-
-    addItem() {
-        this.items.push(
-            {
-                id: undefined,
-                number: undefined,
-                date: undefined, 
-            }
-        )
-
-    }
-
-    deleteItem(i: number){
-        if (this.items.length > 1) {
-            this.items.splice(i, 1)
-        }
-
     }
 }
 

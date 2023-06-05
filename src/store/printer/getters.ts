@@ -4,8 +4,65 @@ import { RootState } from '../types'
 import { PrinterState, Heater, Fan, Led, OutputPin, Sensor, RunoutSensor, KnownExtruder, MCU, Endstop, Probe, ExtruderStepper, Extruder, ExtruderConfig, ProbeName } from './types'
 import { get } from 'lodash-es'
 import getKlipperType from '@/util/get-klipper-type'
+import { stat } from 'fs'
 
 export const getters: GetterTree<PrinterState, RootState> = {
+
+  /**
+   * Custom getters
+   */
+  getInExperiment: (state)=> {
+    return state.printer.radiometer.inExperiment
+  },
+
+  getIterCount: (state) => {
+    return state.printer.radiometer.iterCount
+  },
+
+  getcurrTab: (state) => {
+    return state.printer.radiometer.currTab
+  },
+
+  getcurrIter: (state) => {
+    return state.printer.radiometer.currIter
+  },
+
+  getTabCount: (state) => {
+    return state.printer.radiometer.tabCount
+  },
+
+  getRadioTemp: (state): number => {
+    return state.printer.radiometer.temp
+  },
+
+  getAccuracy: (state): number => {
+      return 0
+  },
+
+  getCurrent: (state, getters): number => {
+      const sensors = getters.getSensors
+      const sensor = sensors.find((obj: Sensor) => obj.name == state.printer.radiometer.name)
+      if (sensor) {
+        state.printer.radiometer.current = sensor.temperature
+      }
+      return state.printer.radiometer.current
+  },
+
+  getK1: (state): number => {
+      return state.printer.radiometer.k1
+  },
+
+  getK2: (state): number => {
+      return state.printer.radiometer.k2
+  },
+
+  getVelocity: (state): number => {
+      return state.printer.radiometer.velocity
+  },
+
+  getComputedActivity: (state): number => {
+      return state.printer.radiometer.velocity * (state.printer.radiometer.k1 + state.printer.radiometer.k2) / 2
+  },
 
   /**
    * Indicates if klippy is connected or not.

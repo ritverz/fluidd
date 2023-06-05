@@ -1,4 +1,4 @@
-import { PrinterState } from './types'
+import { PrinterState} from './types'
 
 /**
  * Maintains the state of the printer, by way of moonraker notifications.
@@ -120,7 +120,24 @@ export const defaultState = (): PrinterState => {
       webhooks: {
         state: '',
         state_message: ''
-      }
+      },
+      radiometer: {
+        state: true,
+        current: 1.0,
+        k1: 1.0,
+        k2: 2.2,
+        velocity: 1.0,
+        // results: {},
+        // history: [],
+        temp: 0,
+
+        currIter: 0,
+        currTab:0,
+        inExperiment: false,
+        isPaused: false,
+        tabCount: 0,
+        iterCount:0,
+      },
     }
   }
 }

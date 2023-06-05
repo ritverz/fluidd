@@ -1,5 +1,5 @@
 import { ActionTree } from 'vuex'
-import { PrinterState } from './types'
+import { PrinterState, RadiometerState } from './types'
 import { RootState } from '../types'
 import { handlePrintStateChange, handleCurrentFileChange, handleExcludeObjectChange } from '../helpers'
 import { handleAddChartEntry, handleSystemStatsChange, handleMcuStatsChange } from '../chart_helpers'
@@ -12,6 +12,101 @@ import sandboxedEval from '@/plugins/sandboxedEval'
 // let retryTimeout: number
 
 export const actions: ActionTree<PrinterState, RootState> = {
+ 
+ // Custom actions
+  onRadiometerRespond({commit, dispatch, getters, rootGetters}, payload){
+    
+    commit('setCurrentRadiometerSig', payload)
+    
+    dispatch('initHeader')
+    
+
+    //get macros process_vars
+    let macros = rootGetters['macros/getMacros']
+    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'vars' )
+
+    //get current experiment status
+    let inExperiment = process.variables["in_experiment"]
+    commit('setInExperiment', inExperiment)
+
+    //get  current tablet
+    let tab = process.variables["tab_current"]
+    commit('setCurrentExperimentTab', tab)
+
+    //get  current iteration
+    let iter = process.variables["iter_current"]
+    commit('setCurrentExperimentIter', iter)
+
+    //get  current A
+    let k_act = process.variables["k_act"]
+    let A = payload * k_act
+
+    //get  current Vsum
+    let disp_volume = process.variables["disp_volume"]
+    let disp_volume_last = process.variables["disp_volume_last"]
+    let V = (iter == getters['getIterCount']) ? disp_volume_last + disp_volume*(iter-1) : disp_volume * iter
+
+    //get  current a
+    let a = V / payload
+
+
+    //Append radiometer data to results object
+    let payload_experiment = {
+      currTab: getters['getcurrTab'],
+      currIter: getters['getcurrIter'],
+      inExperiment: getters['getInExperiment'],
+      sig: payload,
+      A: A.toFixed(3),
+      a: a.toFixed(3),
+      V: V.toFixed(3),
+    }
+
+    commit('config/addRadiometerResult', payload_experiment, {root:true})
+    
+    dispatch('config/saveByPath', {
+       path: 'uiSettings.results',
+       value: JSON.stringify(rootGetters['config/getExperimentResult']),
+       server: true
+       }, 
+     )
+  },
+
+  initHeader({ commit, rootGetters}){
+    let macros = rootGetters['macros/getMacros']
+    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'vars' )
+
+    let tabCount = process.variables["tab_count"]
+    commit('setTabCount', tabCount)
+
+    let iterCount = process.variables["iter_count"]
+    commit('setIterCount', iterCount)
+
+  },
+
+  onExperimentStart({commit, dispatch, rootGetters}, payload){
+    commit('config/clearResults', null, {root:true})
+
+    dispatch('config/saveByPath', {
+      path: 'uiSettings.results',
+      value: '',
+      server: true
+      }, 
+    )
+    
+   
+
+    commit('startNewExperiment') 
+    
+  },
+
+  onExperimentEnd({commit, dispatch, rootGetters}){
+    commit('endExperiment')
+    commit('config/setTest', 'haha2',  {root:true})
+    dispatch('config/addHistory', null , { root: true })
+  },
+
+//End of custom actions
+
   /**
    * Reset our store
    */

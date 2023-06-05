@@ -31,6 +31,8 @@ export class WebSocketClient {
     this.reconnectEnabled = options.reconnectEnabled || false
     this.reconnectInterval = options.reconnectInterval || 1000
     this.store = options.store ? options.store : null
+          
+
   }
 
   pong () {
@@ -81,6 +83,7 @@ export class WebSocketClient {
         this.connection = new WebSocket(`${this.url}?token=${token}`)
 
         this.connection.onopen = () => {
+
           if (this.reconnectEnabled) {
             this.reconnectCount = 1
           }
@@ -107,6 +110,36 @@ export class WebSocketClient {
         this.connection.onmessage = (m) => {
           // Parse the data packet.
           const d: SocketResponse = JSON.parse(m.data)
+          
+          //Radiometer response handler
+           const key_radio_temp = 'gcode_macro QUERY_RADIOMETER_TEMP'
+           const key_radio_sig = 'gcode_macro QUERY_RADIOMETER_SIG'
+           let res = d?.params;
+            res?.forEach((param) => {
+
+              if (typeof param != 'number' && typeof param != 'string' && key_radio_sig in param) {
+                let payload = param[key_radio_sig]['sig']
+                this.store.dispatch('printer/onRadiometerRespond', payload)
+              }
+
+              if (typeof param != 'number' && typeof param != 'string' && key_radio_temp in param) {
+                let payload = param[key_radio_temp]['temp']
+                this.store.commit('printer/setCurrentRadiometerTemp', payload)
+              }
+
+              if (typeof param == 'string' && param.includes('echo: end of process')){
+                
+                this.store.dispatch('printer/onExperimentEnd')
+              }
+
+             
+            })
+
+          // let macros = this.store.getters['macros/getMacros']
+          // macros?.forEach((m: { variables: any }) => {
+          //   let vars = m.variables
+          //   //throw new Error(JSON.stringify(macros))
+          // })
 
           // Is this a socket notification, or an answer to a specific request?
           let request: Request | undefined
@@ -160,7 +193,7 @@ export class WebSocketClient {
                 // so we cache these and send them through every second.
 
                 // If any of these properties exist, bypass the cache and send immediately
-                for (const key of ['motion_report']) {
+                for (const key of ['motion_report', 'gcode_macro QUERY_RADIOMETER_TEMP']) {
                   if (this.store && key in params) {
                     this.store.dispatch('printer/onFastNotifyStatusUpdate', { key, payload: params[key] }, { root: true })
                     delete params[key]

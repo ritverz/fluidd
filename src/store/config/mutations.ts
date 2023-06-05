@@ -1,14 +1,96 @@
 import Vue from 'vue'
 import { MutationTree } from 'vuex'
-import { ConfigState, UiSettings, SaveByPath, InstanceConfig, InitConfig } from './types'
+import { ConfigState, UiSettings, SaveByPath, InstanceConfig, InitConfig, RadiometerEntry, HistoryEntry } from './types'
 import { defaultState } from './state'
 import { Globals } from '@/globals'
 import { merge, set } from 'lodash-es'
 import { v4 as uuidv4 } from 'uuid'
 import { AppTableHeader } from '@/types'
 import { AppTablePartialHeader } from '@/types/tableheaders'
+import { stat } from 'fs'
 
 export const mutations: MutationTree<ConfigState> = {
+
+// Custom mutations 
+  setTest(state, payload){
+    state.test = payload
+  },
+
+  setHistory: (state)=> {
+    let history : HistoryEntry =  {
+        experiment:  state.uiSettings.results,
+        setup:  state.uiSettings.setup.currentSetup
+    }
+    state.uiSettings.history.push(history)
+  },
+
+  addRadiometerResult(state, payload){
+    if (payload.inExperiment){
+      
+      let currTab = payload.currTab
+      let currIter = payload.currIter
+
+      if (!(`${currTab}` in state.uiSettings.results)) {
+        Vue.set(state.uiSettings.results, `${currTab}`, [{'tablet':currTab}])
+      }
+     
+      const entry: RadiometerEntry = {
+        [`V${currIter}`]: payload.V,
+        [`A${currIter}`]: payload.A,
+        [`a${currIter}`]: payload.a,
+        [`date${currIter}`]: new Date().toLocaleString(),
+      };
+
+      state.uiSettings.results[`${currTab}`].push(entry)
+    }
+  },
+
+  clearResults(state){
+    state.uiSettings.results = {}
+  },
+
+  setMode(state, payload){
+    state.uiSettings.setup.mode = payload
+  },
+
+
+  setCurrentSetup(state, payload){
+    state.uiSettings.setup.currentSetup = payload
+  },
+
+  clearCurrentSetup(state){
+    Object.assign( state.uiSettings.setup.currentSetup, defaultState().uiSettings.setup.currentSetup)
+  },
+
+
+  /**
+   * Update / Add a setup preset
+   */
+  setSetupPreset (state, payload) {
+    if (payload.id == -1) {
+     
+      payload.id = uuidv4()
+      const newPreset = structuredClone(payload)
+      state.uiSettings.setup.setupPresets.push(newPreset)
+    } else {
+      const i = state.uiSettings.setup.setupPresets.findIndex(preset => preset.id === payload.id)
+      if (i >= 0) {
+        Vue.set(state.uiSettings.setup.setupPresets, i, payload)
+      }
+    }
+  },
+    
+    /**
+     * Remove a setup preset
+     */
+  setRemoveSetupPreset (state, payload) {
+    const i = state.uiSettings.setup.setupPresets.findIndex(preset => preset.id === payload.id)
+    state.uiSettings.setup.setupPresets.splice(i, 1)
+  },
+
+// End of custom preset
+
+
   /**
    * Reset state
    */
@@ -129,33 +211,6 @@ export const mutations: MutationTree<ConfigState> = {
    */
   setSaveByPath (state, payload: SaveByPath) {
     set(state, payload.path, payload.value)
-  },
-
-  setMode(state, payload){
-    state.uiSettings.setup.mode = payload
-  },
-
-  /**
- * Update / Add a setup preset
- */
-  setSetupPreset (state, payload) {
-    if (payload.id === -1) {
-      payload.id = uuidv4()
-      state.uiSettings.setup.setupPresets.push(payload)
-    } else {
-      const i = state.uiSettings.setup.setupPresets.findIndex(preset => preset.id === payload.id)
-      if (i >= 0) {
-        Vue.set(state.uiSettings.setup.setupPresets, i, payload)
-      }
-    }
-  },
-  
-  /**
-   * Remove a setup preset
-   */
-  setRemoveSetupPreset (state, payload) {
-    const i = state.uiSettings.setup.setupPresets.findIndex(preset => preset.id === payload.id)
-    state.uiSettings.setup.setupPresets.splice(i, 1)
   },
 
   /**

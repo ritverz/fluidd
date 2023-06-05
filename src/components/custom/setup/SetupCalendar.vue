@@ -10,7 +10,7 @@ min-width="290px"
 >
     <template v-slot:activator="{ on, attrs }">
         <v-text-field
-        v-model="date"
+        v-model="value"
         :label="label"
         prepend-icon=$calendar
         readonly
@@ -18,7 +18,7 @@ min-width="290px"
         v-on="on"
         ></v-text-field>
     </template>
-    <v-date-picker v-model="date" @input="ctrlMenu = false"></v-date-picker>
+    <v-date-picker v-model="value" @input="update"></v-date-picker>
 </v-menu>
 
 </template>
@@ -30,11 +30,29 @@ import StateMixin from '@/mixins/state'
 
 @Component
 export default class SetupCalendar extends Mixins(StateMixin){
-    date = new Date().toISOString().substr(0, 10);
+
+    // get innerDate (){
+    //     //new Date().toISOString().substr(0, 10);
+    //     return this.value
+    // }
+
+    // set innerDate(val: String){
+    //     this.$emit('input', val)
+    // }
+
     ctrlMenu = false
+
 
     @Prop({ type: String, default: 'Дата' })
     readonly label!: String
+
+    @Prop({type: String})
+    readonly value!: String
+
+    update(target: string){
+        this.ctrlMenu = false
+        this.$emit('input', target)
+    }
 }
 
 </script>
