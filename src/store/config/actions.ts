@@ -14,7 +14,6 @@ export const actions: ActionTree<ConfigState, RootState> = {
    * Add history entry
    */
   async addHistory({ commit, state }){
-    commit('setTest', 'haha3')
     commit('setHistory')
     SocketActions.serverWrite('uiSettings.history', state.uiSettings.history)
   },

@@ -32,6 +32,8 @@ export interface UiSettings {
 export interface HistoryEntry{
   experiment: Experiment;
   setup: SetupPresets;
+  date: string;
+  id: string;
 }
 
 export interface SetupConfig {

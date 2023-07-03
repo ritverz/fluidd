@@ -104,7 +104,7 @@
           :disabled="!klippyReady || printerPrinting"
           :tooltip="$t('app.tool.tooltip.home_z')"
           icon="$home"
-          @click="sendGcode('G28 Z', $waits.onHomeZ)"
+          @click="sendGcode('safeZD', $waits.onHomeZ)"
         >
         Z2
         </app-btn-toolhead-move>

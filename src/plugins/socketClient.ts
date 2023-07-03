@@ -132,6 +132,12 @@ export class WebSocketClient {
                 this.store.dispatch('printer/onExperimentEnd')
               }
 
+              if (typeof param == 'string' && param.includes('echo: end of calibration')){
+                
+                this.store.commit('printer/setRef', 0)
+                this.store.commit('printer/setInCalib', false)
+              }
+
              
             })
 

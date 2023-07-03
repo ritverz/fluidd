@@ -27,6 +27,18 @@
           <!--Buttons-->     
           
           <app-btn-group class="d-inline">
+            <app-btn
+                class="ms-1 my-1"
+                @click="calibStart()"
+              >
+                <v-icon
+                  small
+                  left
+                >
+                  $calibration
+                </v-icon>
+                <span>Калибровка</span>
+            </app-btn>
 
             <!--start-->
             <app-btn
@@ -165,6 +177,12 @@ export default class Setup extends Mixins(StateMixin){
 
   get filename () {
     return this.$store.state.printer.printer.print_stats.filename
+  }
+
+  calibStart(){
+    this.$store.commit('config/clearResults')
+    this.$store.commit('printer/setInCalib', true)
+    this.sendGcode("START_CALIBRATION")
   }
 
   startPrint() {

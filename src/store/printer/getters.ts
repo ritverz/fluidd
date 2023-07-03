@@ -48,6 +48,18 @@ export const getters: GetterTree<PrinterState, RootState> = {
       return state.printer.radiometer.current
   },
 
+  getKa: (state): number => {
+    return state.printer.radiometer.ka
+  },
+
+  getKb: (state): number => {
+    return state.printer.radiometer.kb
+  },
+
+  getAz: (state): number => {
+    return state.printer.radiometer.Az
+  },
+
   getK1: (state): number => {
       return state.printer.radiometer.k1
   },
@@ -55,6 +67,20 @@ export const getters: GetterTree<PrinterState, RootState> = {
   getK2: (state): number => {
       return state.printer.radiometer.k2
   },
+
+  getActivityBackground: (state): number => {
+    return state.printer.radiometer.activityBackground
+  },
+
+  getInCalib: (state) => {
+    return state.printer.radiometer.inCalib
+  },
+
+  getRef: (state) => {
+    return state.printer.radiometer.ref
+  },
+
+
 
   getVelocity: (state): number => {
       return state.printer.radiometer.velocity

@@ -36,6 +36,18 @@ export const mutations: MutationTree<PrinterState> = {
     state.printer.radiometer.temp = payload
   },
 
+  setKa(state, payload){
+    state.printer.radiometer.ka = payload
+  },
+
+  setKb(state, payload){
+    state.printer.radiometer.kb = payload
+  },
+
+  setAz(state, payload){
+    state.printer.radiometer.Az = payload
+  },
+
   setK1(state, payload){
     state.printer.radiometer.k1 = payload
   },
@@ -43,6 +55,11 @@ export const mutations: MutationTree<PrinterState> = {
   setK2(state, payload){
     state.printer.radiometer.k2 = payload
   },
+
+  setActivityBackground(state, payload){
+    state.printer.radiometer.activityBackground = payload
+  },
+
 
   setVelocity(state, payload){
     state.printer.radiometer.velocity = payload
@@ -67,6 +84,14 @@ export const mutations: MutationTree<PrinterState> = {
 
   resumeExperiment(state){
     state.printer.radiometer.isPaused = false
+  },
+
+  setInCalib(state, payload){
+    state.printer.radiometer.inCalib = payload
+  },
+
+  setRef(state, payload){
+    state.printer.radiometer.ref = payload
   },
 
   /**

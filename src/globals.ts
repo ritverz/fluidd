@@ -1,4 +1,8 @@
 import {
+  mdiNumeric1CircleOutline,
+  mdiNumeric2CircleOutline,
+  mdiAlphaBCircleOutline,
+  mdiRulerSquareCompass,
   mdiEraser,
   mdiCalculator,
   mdiSpeedometer,
@@ -227,6 +231,10 @@ export const Globals = Object.freeze({
 })
 
 export const Icons = Object.freeze({
+  k1: mdiNumeric1CircleOutline,
+  k2: mdiNumeric2CircleOutline,
+  kbackground: mdiAlphaBCircleOutline,
+  calibration:mdiRulerSquareCompass,
   erase:mdiEraser,
   calc: mdiCalculator,
   speed: mdiSpeedometer,

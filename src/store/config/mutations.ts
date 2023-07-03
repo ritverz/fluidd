@@ -16,10 +16,21 @@ export const mutations: MutationTree<ConfigState> = {
     state.test = payload
   },
 
+  clearHistory(state){
+    state.uiSettings.history = []
+  },
+
+  clearHistoryByID(state, payload){
+    const i = state.uiSettings.history.findIndex(preset => preset.id === payload.id)
+    state.uiSettings.history.splice(i, 1)
+  },
+
   setHistory: (state)=> {
     let history : HistoryEntry =  {
         experiment:  state.uiSettings.results,
-        setup:  state.uiSettings.setup.currentSetup
+        setup:  state.uiSettings.setup.currentSetup,
+        date: new Date().toLocaleString(),
+        id: uuidv4()
     }
     state.uiSettings.history.push(history)
   },
@@ -31,8 +42,9 @@ export const mutations: MutationTree<ConfigState> = {
       let currIter = payload.currIter
 
       if (!(`${currTab}` in state.uiSettings.results)) {
-        Vue.set(state.uiSettings.results, `${currTab}`, [{'tablet':currTab}])
+        Vue.set(state.uiSettings.results, `${currTab}`, [{'tablet': currTab}])
       }
+
      
       const entry: RadiometerEntry = {
         [`V${currIter}`]: payload.V,
@@ -42,12 +54,15 @@ export const mutations: MutationTree<ConfigState> = {
       };
 
       state.uiSettings.results[`${currTab}`].push(entry)
+      
+      
     }
   },
 
   clearResults(state){
     state.uiSettings.results = {}
   },
+
 
   setMode(state, payload){
     state.uiSettings.setup.mode = payload

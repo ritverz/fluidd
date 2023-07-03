@@ -12,18 +12,75 @@ import sandboxedEval from '@/plugins/sandboxedEval'
 // let retryTimeout: number
 
 export const actions: ActionTree<PrinterState, RootState> = {
- 
+
  // Custom actions
+
+  //Remove all results
+  removeAllHistory({commit, dispatch, getters, rootGetters}, payload){
+    commit('config/clearHistory', null, {root:true})
+    SocketActions.serverWrite('uiSettings.history', rootGetters['config/getHistory'])
+   },
+
+   removeHistoryById({commit, dispatch, getters, rootGetters}, payload){
+    commit('config/clearHistoryByID', payload, {root:true})
+    SocketActions.serverWrite('uiSettings.history', rootGetters['config/getHistory'])
+
+   },
+
   onRadiometerRespond({commit, dispatch, getters, rootGetters}, payload){
-    
-    commit('setCurrentRadiometerSig', payload)
-    
+
     dispatch('initHeader')
-    
 
     //get macros process_vars
     let macros = rootGetters['macros/getMacros']
     let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'vars' )
+
+    //Compute radiation sig using temp coeff, backroung activity
+    let actBack = getters['getActivityBackground']
+    let k1 =  getters['getK1']
+    let k2 =  getters['getK2']
+    let t_current = getters['getRadioTemp']
+    let Az = process.variables["az"]
+    let ka = process.variables["a"]
+    let kb = process.variables["b"]
+    let sig = payload
+
+    commit('setKa', ka)
+    commit('setKb', kb)
+    commit('setAz', Az)
+
+    if (getters['getInCalib']){
+      let ref = getters['getRef']
+      if (ref == 0) // Compute background
+      {
+        commit('setActivityBackground', sig.toFixed(3))
+      }
+
+      else if (ref == 1) //Compute first reference
+      {
+        let A1ref = rootGetters['config/getCurrentSetup'].refFirstActivity
+        k1 = (Az *(ka * t_current + kb) + A1ref) / payload
+        commit('setK1', k1)
+      }
+
+      else if (ref == 2) //Compute second reference
+      {
+        let A2ref = rootGetters['config/getCurrentSetup'].refSecondActivity
+        k2 = (Az *(ka * t_current + kb) + A2ref) / payload
+        commit('setK2', k2)
+      }
+
+      commit('setCurrentRadiometerSig', sig)
+      commit('setRef', ref + 1)
+      return
+    }
+    else{
+       sig = payload * (k1 + k2) / 2 - actBack
+    }
+
+    commit('setCurrentRadiometerSig', sig)
+
+
 
     //get current experiment status
     let inExperiment = process.variables["in_experiment"]
@@ -38,8 +95,7 @@ export const actions: ActionTree<PrinterState, RootState> = {
     commit('setCurrentExperimentIter', iter)
 
     //get  current A
-    let k_act = process.variables["k_act"]
-    let A = payload * k_act
+    let A = sig 
 
     //get  current Vsum
     let disp_volume = process.variables["disp_volume"]
@@ -47,7 +103,7 @@ export const actions: ActionTree<PrinterState, RootState> = {
     let V = (iter == getters['getIterCount']) ? disp_volume_last + disp_volume*(iter-1) : disp_volume * iter
 
     //get  current a
-    let a = V / payload
+    let a = sig / V
 
 
     //Append radiometer data to results object
@@ -55,7 +111,7 @@ export const actions: ActionTree<PrinterState, RootState> = {
       currTab: getters['getcurrTab'],
       currIter: getters['getcurrIter'],
       inExperiment: getters['getInExperiment'],
-      sig: payload,
+      sig: sig,
       A: A.toFixed(3),
       a: a.toFixed(3),
       V: V.toFixed(3),
@@ -92,8 +148,6 @@ export const actions: ActionTree<PrinterState, RootState> = {
       server: true
       }, 
     )
-    
-   
 
     commit('startNewExperiment') 
     
