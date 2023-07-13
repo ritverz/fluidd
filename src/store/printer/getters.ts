@@ -16,7 +16,7 @@ export const getters: GetterTree<PrinterState, RootState> = {
     let macros = rootGetters['macros/getMacros']
     let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
     //Get dispenser offset from macro
-    return process.variables["zd_x_offset"]
+    return process.variables["ze_x_offset"]
   },
 
   getOffsetRadiometer: (state, getters, rootState, rootGetters) => {
