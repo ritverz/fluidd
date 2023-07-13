@@ -106,7 +106,7 @@
           icon="$home"
           @click="sendGcode('G28 E', $waits.onHomeE)"
         >
-        D
+        E
         </app-btn-toolhead-move>
       </v-col>
     </v-row>
