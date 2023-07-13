@@ -11,6 +11,35 @@ export const getters: GetterTree<PrinterState, RootState> = {
   /**
    * Custom getters
    */
+
+  getOffsetDispenser: (state, getters, rootState, rootGetters) => {
+    let macros = rootGetters['macros/getMacros']
+    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
+    //Get dispenser offset from macro
+    return process.variables["zd_x_offset"]
+  },
+
+  getOffsetRadiometer: (state, getters, rootState, rootGetters) => {
+    let macros = rootGetters['macros/getMacros']
+    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
+    //Get radiometer cell position offset from macro
+    return process.variables["rad_y_offset"]
+  },
+
+  getOffsetManual: (state, getters, rootState, rootGetters) => {
+    let macros = rootGetters['macros/getMacros']
+    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
+    //Get manual dispencing cell position offset from macro
+    return process.variables["man_y_offset"]
+  },
+
+  getOffsetFirstCell:(state, getters, rootState, rootGetters) => {
+    let macros = rootGetters['macros/getMacros']
+    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
+    //Get manual dispencing cell position offset from macro
+    return process.variables["disp_zone_pos_y"]
+  },
+
   getInExperiment: (state)=> {
     return state.printer.radiometer.inExperiment
   },
@@ -401,7 +430,11 @@ export const getters: GetterTree<PrinterState, RootState> = {
       let r = false
       const a = axes.split('')
       a.forEach((char) => {
-        r = state.printer.toolhead.homed_axes.includes(char)
+        if (char === 'e') {
+          r = state.printer.extruder.homed_axes.includes(char)
+        } else {
+          r = state.printer.toolhead.homed_axes.includes(char)
+        }
       })
       return r
     }

@@ -81,6 +81,9 @@ export const defaultState = (): PrinterState => {
         square_corner_velocity: 0,
         extruder: ''
       },
+      extruder: {
+        homed_axes: ''
+      },
       motion_report: {
         live_position: [0, 0, 0, 0],
         live_velocity: 0,

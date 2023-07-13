@@ -35,6 +35,7 @@
         <v-text-field
           :color="(forceMove) ? 'error' : 'primary'"
           :label="`Y [ ${livePosition[1].toFixed(2)} ]`"
+          :tooltip="$t('app.tool.tooltip.dispencecell')"
           outlined
           hide-details
           dense
@@ -42,8 +43,8 @@
           type="number"
           :disabled="!klippyReady || (!yHomed && !yForceMove)"
           :readonly="printerBusy"
-          :value="(useGcodeCoords) ? gcodePosition[1].toFixed(2) : toolheadPosition[1].toFixed(2)"
-          @change="moveTo('Y', $event)"
+          :value="(useGcodeCoords) ? ((gcodePosition[1]- disp_zone_pos_y)/10 %36).toFixed() : ((toolheadPosition[1]- disp_zone_pos_y)/10 %36).toFixed()"
+          @change="moveTo('Y', (parseInt($event)*10 %360 + disp_zone_pos_y).toFixed(2))"
           @focus="$event.target.select()"
         />
       </v-col>
@@ -53,7 +54,7 @@
       >
         <v-text-field
           :color="(forceMove) ? 'error' : 'primary'"
-          :label="`Z1 [ ${livePosition[2].toFixed(2)} ]`"
+          :label="`Z [ ${livePosition[2].toFixed(2)} ]`"
           outlined
           hide-details
           dense
@@ -82,7 +83,7 @@
       >
         <v-text-field
           :color="(forceMove) ? 'error' : 'primary'"
-          :label="`X [ ${livePosition[0].toFixed(2)} ]`"
+          :label="`X [ ${(livePosition[0] + dispoffset).toFixed(2)}  ]`"
           outlined
           hide-details
           dense
@@ -90,8 +91,8 @@
           type="number"
           :disabled="!klippyReady || (!xHomed && !xForceMove)"
           :readonly="printerBusy"
-          :value="(useGcodeCoords) ? gcodePosition[0].toFixed(2) : toolheadPosition[0].toFixed(2)"
-          @change="moveTo('X', $event)"
+          :value="(useGcodeCoords) ? (gcodePosition[0] + dispoffset).toFixed(2) : (toolheadPosition[0] + dispoffset).toFixed(2)"
+          @change="moveTo('X', (parseFloat($event)-dispoffset).toFixed(2))"
           @focus="$event.target.select()"
         />
       </v-col>
@@ -102,6 +103,7 @@
         <v-text-field
           :color="(forceMove) ? 'error' : 'primary'"
           :label="`Y [ ${livePosition[1].toFixed(2)} ]`"
+          :tooltip="$t('app.tool.tooltip.dispencecell')"
           outlined
           hide-details
           dense
@@ -109,8 +111,8 @@
           type="number"
           :disabled="!klippyReady || (!yHomed && !yForceMove)"
           :readonly="printerBusy"
-          :value="(useGcodeCoords) ? gcodePosition[1].toFixed(2) : toolheadPosition[1].toFixed(2)"
-          @change="moveTo('Y', $event)"
+          :value="(useGcodeCoords) ? ((gcodePosition[1]- disp_zone_pos_y)/10 %36).toFixed() : ((toolheadPosition[1]- disp_zone_pos_y)/10 %36).toFixed()"
+          @change="moveTo('Y', (parseInt($event)*10 %360 + disp_zone_pos_y).toFixed(2))"
           @focus="$event.target.select()"
         />
       </v-col>
@@ -120,16 +122,16 @@
       >
         <v-text-field
           :color="(forceMove) ? 'error' : 'primary'"
-          :label="`Z2 [ ${livePosition[2].toFixed(2)} ]`"
+          :label="`E [ ${livePosition[3].toFixed(2)} ]`"
           outlined
           hide-details
           dense
           class="v-input--width-small"
           type="number"
-          :disabled="!klippyReady || (!zHomed && !zForceMove)"
+          :disabled="!klippyReady || (!eHomed && !zForceMove)"
           :readonly="printerBusy"
-          :value="(useGcodeCoords) ? gcodePosition[2].toFixed(2) : toolheadPosition[2].toFixed(2)"
-          @change="moveTo('Z2', $event)"
+          :value="(useGcodeCoords) ? gcodePosition[3].toFixed(2) : toolheadPosition[3].toFixed(2)"
+          @change="moveTo('E', $event)"
           @focus="$event.target.select()"
         />
       </v-col>
@@ -151,6 +153,7 @@
         <v-text-field
           :color="(forceMove) ? 'error' : 'primary'"
           :label="`Y [ ${livePosition[1].toFixed(2)} ]`"
+          :tooltip="$t('app.tool.tooltip.radcell')"
           outlined
           hide-details
           dense
@@ -158,8 +161,8 @@
           type="number"
           :disabled="!klippyReady || (!yHomed && !yForceMove)"
           :readonly="printerBusy"
-          :value="(useGcodeCoords) ? gcodePosition[1].toFixed(2) : toolheadPosition[1].toFixed(2)"
-          @change="moveTo('Y', $event)"
+          :value="(useGcodeCoords) ? ((gcodePosition[1] - disp_zone_pos_y + radoffset)/10 % 36).toFixed() : ((toolheadPosition[1] - disp_zone_pos_y + radoffset)/10 % 36).toFixed()"
+          @change="moveTo('Y', (((parseInt($event)+36)*10-radoffset) % 360 + disp_zone_pos_y).toFixed(2))"
           @focus="$event.target.select()"
         />
       </v-col>
@@ -184,6 +187,7 @@
         <v-text-field
           :color="(forceMove) ? 'error' : 'primary'"
           :label="`Y [ ${livePosition[1].toFixed(2)} ]`"
+          :tooltip="$t('app.tool.tooltip.manualcell')"
           outlined
           hide-details
           dense
@@ -191,8 +195,8 @@
           type="number"
           :disabled="!klippyReady || (!yHomed && !yForceMove)"
           :readonly="printerBusy"
-          :value="(useGcodeCoords) ? gcodePosition[1].toFixed(2) : toolheadPosition[1].toFixed(2)"
-          @change="moveTo('Y', $event)"
+          :value="(useGcodeCoords) ? ((gcodePosition[1] - disp_zone_pos_y + manoffset)/10 % 36).toFixed() : ((toolheadPosition[1] - disp_zone_pos_y + manoffset)/10 % 36).toFixed()"
+          @change="moveTo('Y', (((parseInt($event)+36)*10 - manoffset) % 360 + disp_zone_pos_y).toFixed(2))"
           @focus="$event.target.select()"
         />
       </v-col>
@@ -282,27 +286,42 @@ export default class ToolheadPosition extends Mixins(StateMixin, ToolheadMixin) 
     return this.usesAbsolutePositioning ? 0 : 1
   }
 
+  get dispoffset () {
+    return parseFloat(this.$store.getters['printer/getOffsetDispenser'])
+  }
+
+  get radoffset () {
+    return parseFloat(this.$store.getters['printer/getOffsetRadiometer'])
+  }
+
+  get manoffset () {
+    return parseFloat(this.$store.getters['printer/getOffsetManual'])
+  }
+  get disp_zone_pos_y () {
+    return parseFloat(this.$store.getters['printer/getOffsetFirstCell'])
+  }
+
   set positioning (value: number) {
     this.sendGcode(`G9${value}`)
   }
 
   moveTo (axis: string, pos: string) {
-    const axisIndexMap: any = { X: 0, Y: 1, Z: 2 }
+    const axisIndexMap: any = { X: 0, Y: 1, Z: 2, E: 3}
     const currentPos = (this.useGcodeCoords)
       ? this.gcodePosition[axisIndexMap[axis]]
       : this.toolheadPosition[axisIndexMap[axis]]
     if (parseInt(currentPos) !== parseInt(pos)) {
-      const rate = (axis.toLowerCase() === 'z')
+      const rate = ((axis.toLowerCase() === 'z') || (axis.toLowerCase() === 'e'))
         ? this.$store.state.config.uiSettings.general.defaultToolheadZSpeed
         : this.$store.state.config.uiSettings.general.defaultToolheadXYSpeed
       if (this.forceMove) {
-        const accel = (axis.toLowerCase() === 'z')
+        const accel = ((axis.toLowerCase() === 'z') || (axis.toLowerCase() === 'e'))
           ? this.$store.getters['printer/getPrinterSettings']('printer.max_z_accel')
           : this.$store.state.printer.printer.toolhead.max_accel
         this.sendGcode(`FORCE_MOVE STEPPER=stepper_${axis.toLowerCase()} DISTANCE=${pos} VELOCITY=${rate} ACCEL=${accel}`)
       } else {
         this.sendGcode(`G90
-        G1 ${axis}${pos} F${rate * 60}`)
+        G0 ${axis}${pos} F${rate * 60}`)
       }
     }
   }

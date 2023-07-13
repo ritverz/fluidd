@@ -27,13 +27,15 @@ export const actions: ActionTree<PrinterState, RootState> = {
 
    },
 
+   
+
   onRadiometerRespond({commit, dispatch, getters, rootGetters}, payload){
 
     dispatch('initHeader')
 
     //get macros process_vars
     let macros = rootGetters['macros/getMacros']
-    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'vars' )
+    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
 
     //Compute radiation sig using temp coeff, backroung activity
     let actBack = getters['getActivityBackground']

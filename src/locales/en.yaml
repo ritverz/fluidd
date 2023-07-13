@@ -643,6 +643,10 @@ app:
       extruder_disabled: extruder disabled, below min_extrude_temp (%{min}<small>°C</small>)
       home_xy: Home XY
       home_z: Home Z
+      home_e: Home Extruder
+      dispencecell: Cell number for automatic dispencer [0.35]
+      manualcell: Cell number for manual dispencing [0..35]
+      radcell: Cell number for radiometer [0..35]      
       manual_probe: Manual Probe
       motors_off: MOTORS OFF
       z_tilt_adjust: Z_Tilt_Adjust

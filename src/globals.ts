@@ -403,6 +403,7 @@ export const Waits = Object.freeze({
   onHomeX: 'onHomeX',
   onHomeY: 'onHomeY',
   onHomeZ: 'onHomeZ',
+  onHomeE: 'onHomeE',
   onQGL: 'onQGL',
   onZTilt: 'onZTilt',
   onBedScrewsAdjust: 'onBedScrewAdjust',

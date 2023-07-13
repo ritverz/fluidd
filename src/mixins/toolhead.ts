@@ -32,7 +32,7 @@ export default class ToolheadMixin extends Vue {
   }
 
   get allHomed (): boolean {
-    return this.$store.getters['printer/getHomedAxes']('xyz') as boolean
+    return this.$store.getters['printer/getHomedAxes']('xyze') as boolean
   }
 
   get xyHomed (): boolean {
@@ -49,6 +49,10 @@ export default class ToolheadMixin extends Vue {
 
   get zHomed (): boolean {
     return this.$store.getters['printer/getHomedAxes']('z') as boolean
+  }
+
+  get eHomed (): boolean {
+    return this.$store.getters['printer/getHomedAxes']('e') as boolean
   }
 
   get xHasMultipleSteppers (): boolean {

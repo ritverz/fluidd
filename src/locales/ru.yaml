@@ -598,8 +598,12 @@ app:
     tooltip:
       absolute_positioning: Абсолютная позиция
       extruder_disabled: Экструдер отключён, температура ниже чем (%{min}<small>°C</small>)
-      home_xy: Домой XY
-      home_z: Домой Z
+      home_xy: Калибровка осей XY
+      home_z: Калибровка оси Z
+      home_e: Калибровка оси экструдера
+      dispencecell: Номер ячейки под автоматом нанесения [0.35]
+      manualcell: Номер ячейки для ручного нанесения раствора [0..35]
+      radcell: Номер ячейки под радиометром [0..35]
       manual_probe: Ручная регулировка стола
       motors_off: МОТОРЫ ВЫКЛ
       z_tilt_adjust: Z Регулировка наклона

@@ -24,7 +24,7 @@
           :color="axisButtonColor(zHomed)"
           :disabled="axisButtonDisabled(zHomed, zHasMultipleSteppers)"
           icon="$up"
-          @click="sendMoveGcode('Z1', toolheadMoveLength)"
+          @click="sendMoveGcode('Z', toolheadMoveLength)"
         />
       </v-col>
       <v-col
@@ -32,10 +32,10 @@
         class="ml-3"
       >
         <app-btn-toolhead-move
-          :color="axisButtonColor(zHomed)"
-          :disabled="axisButtonDisabled(zHomed, zHasMultipleSteppers)"
+          :color="axisButtonColor(eHomed)"
+          :disabled="axisButtonDisabled(eHomed, zHasMultipleSteppers)"
           icon="$up"
-          @click="sendMoveGcode('Z2', toolheadMoveLength)"
+          @click="sendMoveGcode('E', toolheadMoveLength)"
         />
       </v-col>
     </v-row>
@@ -90,7 +90,7 @@
           icon="$home"
           @click="sendGcode('G28 Z', $waits.onHomeZ)"
         >
-        Z1
+        Z
         </app-btn-toolhead-move>
       </v-col>
       <v-col
@@ -99,14 +99,14 @@
         class="ml-2"
       >
         <app-btn-toolhead-move
-          :color="(!zHomed) ? 'primary' : undefined"
-          :loading="hasWait($waits.onHomeZ)"
+          :color="(!eHomed) ? 'primary' : undefined"
+          :loading="hasWait($waits.onHomeE)"
           :disabled="!klippyReady || printerPrinting"
-          :tooltip="$t('app.tool.tooltip.home_z')"
+          :tooltip="$t('app.tool.tooltip.home_e')"
           icon="$home"
-          @click="sendGcode('safeZD', $waits.onHomeZ)"
+          @click="sendGcode('G28 E', $waits.onHomeE)"
         >
-        Z2
+        D
         </app-btn-toolhead-move>
       </v-col>
     </v-row>
@@ -134,7 +134,7 @@
           :color="axisButtonColor(zHomed)"
           :disabled="axisButtonDisabled(zHomed, zHasMultipleSteppers)"
           icon="$down"
-          @click="sendMoveGcode('Z1', toolheadMoveLength, true)"
+          @click="sendMoveGcode('Z', toolheadMoveLength, true)"
         />
       </v-col>
       <v-col
@@ -142,10 +142,10 @@
         class="ml-8"
       >
         <app-btn-toolhead-move
-          :color="axisButtonColor(zHomed)"
-          :disabled="axisButtonDisabled(zHomed, zHasMultipleSteppers)"
+          :color="axisButtonColor(eHomed)"
+          :disabled="axisButtonDisabled(eHomed, zHasMultipleSteppers)"
           icon="$down"
-          @click="sendMoveGcode('Z2', toolheadMoveLength, true)"
+          @click="sendMoveGcode('E', toolheadMoveLength, true)"
         />
       </v-col>
     </v-row>
@@ -234,22 +234,25 @@ export default class ToolheadMoves extends Mixins(StateMixin, ToolheadMixin) {
    */
   sendMoveGcode (axis: string, distance: string, negative = false) {
     axis = axis.toLowerCase()
-    const rate = (axis.toLowerCase() === 'z')
+    let inverted = false
+    const rate = ((axis.toLowerCase() === 'z') || (axis.toLowerCase() === 'e'))
       ? this.$store.state.config.uiSettings.general.defaultToolheadZSpeed
       : this.$store.state.config.uiSettings.general.defaultToolheadXYSpeed
-    const inverted = this.$store.state.config.uiSettings.general.axis[axis].inverted || false
+    if (axis.toLowerCase() != 'e') {
+      inverted = this.$store.state.config.uiSettings.general.axis[axis].inverted || false 
+    }
     distance = ((negative && !inverted) || (!negative && inverted))
       ? '-' + distance
       : distance
 
     if (this.forceMove) {
-      const accel = (axis.toLowerCase() === 'z')
+      const accel = ((axis.toLowerCase() === 'z') || (axis.toLowerCase() === 'e'))
         ? this.$store.getters['printer/getPrinterSettings']('printer.max_z_accel')
         : this.$store.state.printer.printer.toolhead.max_accel
       this.sendGcode(`FORCE_MOVE STEPPER=stepper_${axis} DISTANCE=${distance} VELOCITY=${rate} ACCEL=${accel}`)
     } else {
       this.sendGcode(`G91
-      G1 ${axis}${distance} F${rate * 60}
+      G0 ${axis}${distance} F${rate * 60}
       G90`)
     }
   }
