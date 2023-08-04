@@ -16,8 +16,6 @@ export interface  RadiometerState {
   k1: number;
   k2: number;
   velocity: number;
-  // results: Experiment;
-  // history: HistoryEntry[];
   temp: number;
 
   currIter: number;
@@ -27,31 +25,6 @@ export interface  RadiometerState {
   tabCount: number;
   iterCount:number;
 }
-
-
-// export interface HistoryEntry{
-  
-//   preset: SetupPresets;
-//   results: Experiment;
-// }
-
-// export interface Experiment{
-//   [x: string]: ExperimentEntry[];
-// }
-
-// export interface ExperimentEntry{
-//   [x: string]: any;
-// }
-
-// export interface RadiometerEntry {
-//   // V: number;
-//   // A: number;
-//   // a: number;
-//   // date: string;
-//   // tablet: number;
-
-//   [x: string]: any,
-// }
 
 
 export interface KnownExtruder {

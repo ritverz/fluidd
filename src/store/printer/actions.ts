@@ -30,116 +30,153 @@ export const actions: ActionTree<PrinterState, RootState> = {
    
 
   onRadiometerRespond({commit, dispatch, getters, rootGetters}, payload){
+    // dispatch('initHeader')
 
-    dispatch('initHeader')
+    // //get macros process_vars
+    // let macros = rootGetters['macros/getMacros']
+    // let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
 
-    //get macros process_vars
+    // //Compute radiation sig using temp coeff, backroung activity
+    // let actBack = getters['getActivityBackground']
+    // let k1 =  getters['getK1']
+    // let k2 =  getters['getK2']
+    // let t_current = getters['getRadioTemp']
+    // let Az = process.variables["az"]
+    // let ka = process.variables["a"]
+    // let kb = process.variables["b"]
+    // let sig = payload
+
+    // commit('setKa', ka)
+    // commit('setKb', kb)
+    // commit('setAz', Az)
+
+    // if (getters['getInCalib']){
+    //   let ref = getters['getRef']
+    //   if (ref == 0) // Compute background
+    //   {
+    //     commit('setActivityBackground', sig.toFixed(3))
+    //   }
+
+    //   else if (ref == 1) //Compute first reference
+    //   {
+    //     let A1ref = rootGetters['config/getCurrentSetup'].refFirstActivity
+    //     k1 = (Az *(ka * t_current + kb) + A1ref) / payload
+    //     commit('setK1', k1)
+    //   }
+
+    //   else if (ref == 2) //Compute second reference
+    //   {
+    //     let A2ref = rootGetters['config/getCurrentSetup'].refSecondActivity
+    //     k2 = (Az *(ka * t_current + kb) + A2ref) / payload
+    //     commit('setK2', k2)
+    //   }
+
+    //   commit('setCurrentRadiometerSig', sig)
+    //   commit('setRef', ref + 1)
+    //   return
+    // }
+    // else{
+    //    sig = payload * (k1 + k2) / 2 - actBack
+    // }
+
+    // commit('setCurrentRadiometerSig', sig)
+
+
+
+    // //get current experiment status
+    // let inExperiment = process.variables["in_experiment"]
+    // commit('setInExperiment', inExperiment)
+
+    // //get  current tablet
+    // let tab = process.variables["tab_current"]
+    // commit('setCurrentExperimentTab', tab)
+
+    // //get  current iteration
+    // let iter = process.variables["iter_current"]
+    // commit('setCurrentExperimentIter', iter)
+
+    // //get  current A
+    // let A = sig 
+
+    // //get  current Vsum
+    // let disp_volume = process.variables["disp_volume"]
+    // let disp_volume_last = process.variables["disp_volume_last"]
+    // let V = (iter == getters['getIterCount']) ? disp_volume_last + disp_volume*(iter-1) : disp_volume * iter
+
+    // //get  current a
+    // let a = sig / V
+
+
+    // //Append radiometer data to results object
+    // let payload_experiment = {
+    //   currTab: getters['getcurrTab'],
+    //   currIter: getters['getcurrIter'],
+    //   inExperiment: getters['getInExperiment'],
+    //   sig: sig,
+    //   A: A.toFixed(3),
+    //   a: a.toFixed(3),
+    //   V: V.toFixed(3),
+    // }
+
+    // commit('config/addRadiometerResult', payload_experiment, {root:true})
+    
+    // dispatch('config/saveByPath', {
+    //    path: 'uiSettings.results',
+    //    value: JSON.stringify(rootGetters['config/getExperimentResult']),
+    //    server: true
+    //    }, 
+    //  )
+  },
+
+  cycleReadExperiment({commit, dispatch, rootGetters}){
     let macros = rootGetters['macros/getMacros']
     let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
+    
+    let in_experiment = process.variables["in_experiment"]
+    let tab_count = process.variables["tab_count"]
+    let iter_count = process.variables["iter_count"]
+    let iter_current = process.variables["iter_current"]
+    let tab_current = process.variables["tab_current"]
+    let tab_target_activity = process.variables["tab_target_activity"]
+    let tab_activity_list = process.variables["tab_activity_list"]
+    let disp_volume_final = process.variables["disp_volume_final"]
+    let radiometer_avg_sig = process.variables["radiometer_avg_sig"]
+    let radiometer_zero_sig = process.variables["radiometer_zero_sig"]
+    let radiometer_floor_sig = process.variables["radiometer_floor_sig"]
+    let radiometer_k = process.variables["radiometer_k"]
+    let radiometer_k1 = process.variables["radiometer_k1"]
+    let radiometer_k2= process.variables["radiometer_k2"]
 
-    //Compute radiation sig using temp coeff, backroung activity
-    let actBack = getters['getActivityBackground']
-    let k1 =  getters['getK1']
-    let k2 =  getters['getK2']
-    let t_current = getters['getRadioTemp']
-    let Az = process.variables["az"]
-    let ka = process.variables["a"]
-    let kb = process.variables["b"]
-    let sig = payload
+    //Debug
+    console.error(process.variables["in_experiment"])
 
-    commit('setKa', ka)
-    commit('setKb', kb)
-    commit('setAz', Az)
+    commit('setInExperiment', in_experiment)
+    commit('setTabCount', tab_count)
+    commit('setIterCount', iter_count)
+    commit('setCurrentExperimentIter', iter_current)
+    commit('setCurrentExperimentTab', tab_current)
 
-    if (getters['getInCalib']){
-      let ref = getters['getRef']
-      if (ref == 0) // Compute background
-      {
-        commit('setActivityBackground', sig.toFixed(3))
-      }
-
-      else if (ref == 1) //Compute first reference
-      {
-        let A1ref = rootGetters['config/getCurrentSetup'].refFirstActivity
-        k1 = (Az *(ka * t_current + kb) + A1ref) / payload
-        commit('setK1', k1)
-      }
-
-      else if (ref == 2) //Compute second reference
-      {
-        let A2ref = rootGetters['config/getCurrentSetup'].refSecondActivity
-        k2 = (Az *(ka * t_current + kb) + A2ref) / payload
-        commit('setK2', k2)
-      }
-
-      commit('setCurrentRadiometerSig', sig)
-      commit('setRef', ref + 1)
-      return
-    }
-    else{
-       sig = payload * (k1 + k2) / 2 - actBack
-    }
-
-    commit('setCurrentRadiometerSig', sig)
+    commit('setActivityZero', radiometer_zero_sig)
+    commit('setCurrentRadiometerSig', radiometer_avg_sig)
+    commit('setActivityBackground', radiometer_floor_sig)
+    commit('setK1', radiometer_k1)
+    commit('setK2', radiometer_k2)
 
 
+    window.console.error( 'список измеренных активностей', tab_activity_list)
 
-    //get current experiment status
-    let inExperiment = process.variables["in_experiment"]
-    commit('setInExperiment', inExperiment)
-
-    //get  current tablet
-    let tab = process.variables["tab_current"]
-    commit('setCurrentExperimentTab', tab)
-
-    //get  current iteration
-    let iter = process.variables["iter_current"]
-    commit('setCurrentExperimentIter', iter)
-
-    //get  current A
-    let A = sig 
-
-    //get  current Vsum
-    let disp_volume = process.variables["disp_volume"]
-    let disp_volume_last = process.variables["disp_volume_last"]
-    let V = (iter == getters['getIterCount']) ? disp_volume_last + disp_volume*(iter-1) : disp_volume * iter
-
-    //get  current a
-    let a = sig / V
-
-
-    //Append radiometer data to results object
-    let payload_experiment = {
-      currTab: getters['getcurrTab'],
-      currIter: getters['getcurrIter'],
-      inExperiment: getters['getInExperiment'],
-      sig: sig,
-      A: A.toFixed(3),
-      a: a.toFixed(3),
-      V: V.toFixed(3),
-    }
-
-    commit('config/addRadiometerResult', payload_experiment, {root:true})
+    // Update table data
+    // Rewrite this function. How to retrive measurement date?
+    // commit('config/addRadiometerResult', payload_experiment, {root:true})
     
     dispatch('config/saveByPath', {
        path: 'uiSettings.results',
        value: JSON.stringify(rootGetters['config/getExperimentResult']),
        server: true
        }, 
-     )
+    )
   },
 
-  initHeader({ commit, rootGetters}){
-    let macros = rootGetters['macros/getMacros']
-    let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'vars' )
-
-    let tabCount = process.variables["tab_count"]
-    commit('setTabCount', tabCount)
-
-    let iterCount = process.variables["iter_count"]
-    commit('setIterCount', iterCount)
-
-  },
 
   onExperimentStart({commit, dispatch, rootGetters}, payload){
     commit('config/clearResults', null, {root:true})
@@ -157,7 +194,6 @@ export const actions: ActionTree<PrinterState, RootState> = {
 
   onExperimentEnd({commit, dispatch, rootGetters}){
     commit('endExperiment')
-    commit('config/setTest', 'haha2',  {root:true})
     dispatch('config/addHistory', null , { root: true })
   },
 

@@ -1,5 +1,6 @@
 import {
   mdiNumeric1CircleOutline,
+  mdiNumeric0CircleOutline,
   mdiNumeric2CircleOutline,
   mdiAlphaBCircleOutline,
   mdiRulerSquareCompass,
@@ -234,6 +235,7 @@ export const Icons = Object.freeze({
   k1: mdiNumeric1CircleOutline,
   k2: mdiNumeric2CircleOutline,
   kbackground: mdiAlphaBCircleOutline,
+  kZero: mdiNumeric0CircleOutline,
   calibration:mdiRulerSquareCompass,
   erase:mdiEraser,
   calc: mdiCalculator,

@@ -54,8 +54,7 @@ export const mutations: MutationTree<ConfigState> = {
       };
 
       state.uiSettings.results[`${currTab}`].push(entry)
-      
-      
+ 
     }
   },
 

@@ -69,130 +69,17 @@
             {{ backgroundActivity }}
             </v-chip>
 
-
-            <!-- <v-chip
+            <v-chip
             class="ma-2"
             label
             text-color="white"
             >
             <v-icon left>
-                
+                $kZero
             </v-icon>
-            {{ k1 + k2 }}
-            </v-chip> -->
-
-            <!-- <v-chip
-            class="ma-2"
-            label
-            text-color="white"
-            >
-            <v-icon left>
-                $kbackground
-            </v-icon>
-            {{ ref }}
-            </v-chip> -->
-
-            <!-- <v-chip
-            class="ma-2"
-            label
-            text-color="white"
-            >
-            <v-icon left>
-                $kbackground
-            </v-icon>
-            {{ refFirstActivity }}
-            </v-chip> -->
-            
-            <!-- <v-chip
-            class="ma-2"
-            label
-            text-color="white"
-            >
-            <v-icon left>
-                $kbackground
-            </v-icon>
-            {{ refSecondActivity }}
-            </v-chip> -->
-
-            <!-- <v-chip
-            class="ma-2"
-            label
-            text-color="white"
-            >
-            <v-icon left>
-                $kbackground
-            </v-icon>
-            {{ ka }}
+            {{ backgroundActivity }}
             </v-chip>
 
-            <v-chip
-            class="ma-2"
-            label
-            text-color="white"
-            >
-            <v-icon left>
-                $kbackground
-            </v-icon>
-            {{ kb }}
-            </v-chip>
-
-            <v-chip
-            class="ma-2"
-            label
-            text-color="white"
-            >
-            <v-icon left>
-                $k1
-            </v-icon>
-            {{ Az }}
-            </v-chip> -->
-
-
-
-
-            
-
-            <!-- <v-chip
-            class="ma-2"
-            label
-            text-color="white"
-            >
-            <v-icon left>
-                $calc
-            </v-icon>
-            {{ computedActivity }}
-            </v-chip> -->
-
-           <!-- <div
-            class="ma-2"
-            label
-            text-color="white"
-            style="width: 300px word-wrap: break-word;"
-            >
-
-            {{ temp }}
-            </div>
- 
-            <div
-            class="ma-2"
-            label
-            text-color="white"
-            style="width: 300px word-wrap: break-word;"
-            >
-
-            {{ temp2 }}
-            </div>
-
-            <v-chip
-            class="ma-2"
-            label
-            text-color="white"
-            >
-            <v-icon left>
-                $calc
-            </v-icon>
-            {{ temp3 }}
-            </v-chip>  -->
             </div>
             <result-table v-bind:full="size"/>
 
@@ -237,16 +124,8 @@
             return this.$store.getters['printer/getK2']
         }
 
-        get ka(){
-            return this.$store.getters['printer/getKa']
-        }
-
-        get kb(){
-            return this.$store.getters['printer/getKb']
-        }
-
-        get Az(){
-            return this.$store.getters['printer/getAz']
+        get ativityZero(){
+            return this.$store.getters['printer/getActivityZero']
         }
 
 
@@ -257,23 +136,6 @@
         get ref(){
             return this.$store.getters['printer/getRef']
         }
-
-        // get temp(){
-        //     return this.$store.getters['config/getHistory']
-        //     // return this.$store.getters['printer/getInExperiment']
-        //     // return this.$store.getters['printer/getcurrTab']
-        // }
-
-        // get temp2(){
-        //     //return this.$store.getters['printer/getcurrIter']
-        //     return this.$store.getters['config/getTest']
-        // }
-
-        // get temp3(){
-        //     return this.$store.getters['printer/getcurrTab']
-        //     //return this.$store.getters['config/getHistory']
-        // }
-
        
 
     }

@@ -73,55 +73,10 @@ export default class ResultTable extends Mixins(StateMixin) {
       
 
     }
-    // if (!this.full){
-    //   mesuared.reverse()
-    // }
+
     headersArr.push(...mesuared)
     return headersArr
   }
-
-
-  //     return [
-  //     {
-  //       text: '№ табл.',
-  //       align: 'start',
-  //       sortable: false,
-  //       value: 'name',
-  //     },
-  //     { text: 'Calories', value: 'calories' },
-  //     { text: 'Fat (g)', value: 'fat' },
-  //     { text: 'Carbs (g)', value: 'carbs' },
-  //     { text: 'Protein (g)', value: 'protein' },
-  //     { text: 'Iron (%)', value: 'iron' },
-  //     { text: 'Iron (%)', value: 'iron2' },
-  //     { text: 'Iron (%)', value: 'iron3' },
-  //     { text: 'Iron (%)', value: 'iron4' },
-  //     { text: 'Iron (%)', value: 'iron5' },
-  //     { text: 'Iron (%)', value: 'iron6' },
-  //     { text: 'Iron (%)', value: 'iron7' },
-  //     { text: 'Iron (%)', value: 'iron8' },
-  //     { text: 'Iron (%)', value: 'iron9' },
-  //     { text: 'Iron (%)', value: 'iron10' },
-  //   ]
-  // }
-  // desserts = [
-  //   {
-  //     name: 'Frozen Yogurt',
-  //     calories: 159,
-  //     fat: 6.0,
-  //     carbs: 24,
-  //     protein: 4.0,
-  //     iron: 1,
-  //   },
-  //   {
-  //     name: 'Ice cream sandwich',
-  //     calories: 237,
-  //     fat: 9.0,
-  //     carbs: 37,
-  //     protein: 4.3,
-  //     iron: 1,
-  //   },
-  // ]
 }
 </script>
 

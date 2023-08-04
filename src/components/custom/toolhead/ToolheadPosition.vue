@@ -297,6 +297,7 @@ export default class ToolheadPosition extends Mixins(StateMixin, ToolheadMixin) 
   get manoffset () {
     return parseFloat(this.$store.getters['printer/getOffsetManual'])
   }
+  
   get disp_zone_pos_y () {
     return parseFloat(this.$store.getters['printer/getOffsetFirstCell'])
   }

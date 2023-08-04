@@ -16,28 +16,28 @@ export const getters: GetterTree<PrinterState, RootState> = {
     let macros = rootGetters['macros/getMacros']
     let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
     //Get dispenser offset from macro
-    return process.variables["ze_x_offset"]
+    return process?.variables["ze_x_offset"]
   },
 
   getOffsetRadiometer: (state, getters, rootState, rootGetters) => {
     let macros = rootGetters['macros/getMacros']
     let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
     //Get radiometer cell position offset from macro
-    return process.variables["rad_y_offset"]
+    return process?.variables["rad_y_offset"]
   },
 
   getOffsetManual: (state, getters, rootState, rootGetters) => {
     let macros = rootGetters['macros/getMacros']
     let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
     //Get manual dispencing cell position offset from macro
-    return process.variables["man_y_offset"]
+    return process?.variables["man_y_offset"]
   },
 
   getOffsetFirstCell:(state, getters, rootState, rootGetters) => {
     let macros = rootGetters['macros/getMacros']
     let process = macros?.find((m: { name: string; variables: any } )=> m.name == 'process_vars' )
     //Get manual dispencing cell position offset from macro
-    return process.variables["disp_zone_pos_y"]
+    return process?.variables["disp_zone_pos_y"]
   },
 
   getInExperiment: (state)=> {
@@ -69,12 +69,7 @@ export const getters: GetterTree<PrinterState, RootState> = {
   },
 
   getCurrent: (state, getters): number => {
-      const sensors = getters.getSensors
-      const sensor = sensors.find((obj: Sensor) => obj.name == state.printer.radiometer.name)
-      if (sensor) {
-        state.printer.radiometer.current = sensor.temperature
-      }
-      return state.printer.radiometer.current
+    return state.printer.radiometer.current
   },
 
   getKa: (state): number => {
@@ -85,8 +80,8 @@ export const getters: GetterTree<PrinterState, RootState> = {
     return state.printer.radiometer.kb
   },
 
-  getAz: (state): number => {
-    return state.printer.radiometer.Az
+  getActivityZero: (state): number => {
+    return state.printer.radiometer.activityZero
   },
 
   getK1: (state): number => {
