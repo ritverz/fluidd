@@ -90,7 +90,7 @@ appInit()
 
     //Read macros variables
     setInterval(function() {
-      window.console.error('Run every 5s', config)
+//      window.console.error('Run every 5s', config)
       store.dispatch('macros/reset')
       store.dispatch('printer/cycleReadExperiment')
     }, 5000);
