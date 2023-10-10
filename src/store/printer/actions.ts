@@ -137,9 +137,11 @@ export const actions: ActionTree<PrinterState, RootState> = {
     let iter_count = process.variables["iter_count"]
     let iter_current = process.variables["iter_current"]
     let tab_current = process.variables["tab_current"]
-    let tab_target_activity = process.variables["tab_target_activity"]
-    let tab_activity_list = process.variables["tab_activity_list"]
-    let disp_volume_final = process.variables["disp_volume_final"]
+    let vol_activity = process.variables["sol_vol_activity"]
+    let disp_volume = process.variables["disp_volume_initial"]
+    let tab_activity_list = process.variables["tab_activity_list"]  // measured tab activities array
+    let disp_volume_final_list = process.variables["disp_volume_final"]  // final aliquot volumes array
+    let tab_dispense_ts_list = process.variables["tab_dispense_ts_list"]    // dispensing timestamps array
     let radiometer_avg_sig = process.variables["radiometer_avg_sig"]
     let radiometer_zero_sig = process.variables["radiometer_zero_sig"]
     let radiometer_floor_sig = process.variables["radiometer_floor_sig"]
@@ -147,8 +149,9 @@ export const actions: ActionTree<PrinterState, RootState> = {
     let radiometer_k1 = process.variables["radiometer_k1"]
     let radiometer_k2= process.variables["radiometer_k2"]
 
-    //Debug
-    console.error(process.variables["in_experiment"])
+//    //Debug
+//    console.error(process.variables["in_experiment"])
+    if (iter_count == 0) return
 
     commit('setInExperiment', in_experiment)
     commit('setTabCount', tab_count)
@@ -161,14 +164,59 @@ export const actions: ActionTree<PrinterState, RootState> = {
     commit('setActivityBackground', radiometer_floor_sig)
     commit('setK1', radiometer_k1)
     commit('setK2', radiometer_k2)
+    commit('setK', radiometer_k)
 
+    if (tab_activity_list[1] == 777) {
+      tab_activity_list = tab_activity_list[0]
+    }
+    if (tab_dispense_ts_list[1] == 777) {
+      tab_dispense_ts_list = tab_activity_list[0]
+    }
+    if (disp_volume_final_list[1] == 777) {
+      disp_volume_final_list = tab_activity_list[0]
+    }
+//    window.console.error( 'список измеренных активностей', tab_activity_list)
+//    window.console.error('tab=', tab_current,'/',tab_count)
+//    window.console.error('iter=', iter_current, '/',iter_count)
+    //Append radiometer data to results object
+    commit('config/clearResults', null, {root:true})  
+//    for (let iter = 0; iter < tab_dispense_ts_list.length; iter++) {  
+    for (let iter = 0; iter < iter_current; iter++) {  
+      let final_volume = 0
 
-    window.console.error( 'список измеренных активностей', tab_activity_list)
+      for (let tab = 0; tab < tab_dispense_ts_list[iter].length; tab++) {  
+        if (iter == iter_count - 1 && iter != 0) {final_volume = disp_volume_final_list[tab]-disp_volume}
+        let V = disp_volume * (iter + 1) + final_volume
+        let A:string
+        let a:number
+        if (tab_activity_list[iter].length > tab) {
+          A = tab_activity_list[iter][tab].toFixed(3).toString()
+          a = tab_activity_list[iter][tab] / V
+        } else {
+          a = vol_activity
+          if (iter>0) {
+            A = (a*disp_volume_final_list[tab] + tab_activity_list[iter-1][tab]).toFixed(3).toString()+"*"  
+          } else {
+            A = (a*V).toFixed(3).toString()+"*"
+          }
+        }
 
-    // Update table data
-    // Rewrite this function. How to retrive measurement date?
-    // commit('config/addRadiometerResult', payload_experiment, {root:true})
-    
+        let payload_experiment = {
+          currTab: tab+1,
+          currIter: iter+1,
+
+          inExperiment: in_experiment,
+          sig: radiometer_avg_sig,
+          A: A,
+          a: a.toFixed(3),
+          V: V.toFixed(3),
+          TS: tab_dispense_ts_list[iter][tab],
+        }
+        // Update table data
+        commit('config/addRadiometerResult', payload_experiment, {root:true})
+      }
+    }
+
     dispatch('config/saveByPath', {
        path: 'uiSettings.results',
        value: JSON.stringify(rootGetters['config/getExperimentResult']),
