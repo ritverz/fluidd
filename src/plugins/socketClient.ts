@@ -130,6 +130,7 @@ export class WebSocketClient {
               if (typeof param == 'string' && param.includes('echo: end of process')){
                 
                 this.store.dispatch('printer/onExperimentEnd')
+                window.console.error('experiment finished, commiting results')
               }
 
               if (typeof param == 'string' && param.includes('echo: end of calibration')){
