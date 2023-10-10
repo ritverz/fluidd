@@ -36,7 +36,7 @@ export const mutations: MutationTree<ConfigState> = {
   },
 
   addRadiometerResult(state, payload){
-    if (payload.inExperiment){
+//    if (payload.inExperiment){
       
       let currTab = payload.currTab
       let currIter = payload.currIter
@@ -50,12 +50,13 @@ export const mutations: MutationTree<ConfigState> = {
         [`V${currIter}`]: payload.V,
         [`A${currIter}`]: payload.A,
         [`a${currIter}`]: payload.a,
-        [`date${currIter}`]: new Date().toLocaleString(),
+//        [`date${currIter}`]: payload.TS.toLocaleString(),
+        [`date${currIter}`]: new Date(payload.TS*1000).toLocaleString(),
       };
 
       state.uiSettings.results[`${currTab}`].push(entry)
- 
-    }
+      window.console.error( 'ui.push:', state.uiSettings.results[`${currTab}`])
+//    }
   },
 
   clearResults(state){
