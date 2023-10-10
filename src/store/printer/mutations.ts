@@ -56,6 +56,11 @@ export const mutations: MutationTree<PrinterState> = {
     state.printer.radiometer.k2 = payload
   },
 
+  setK(state, payload){
+    state.printer.radiometer.k = payload
+  },
+  
+
   setActivityBackground(state, payload){
     state.printer.radiometer.activityBackground = payload
   },
